@@ -19,10 +19,10 @@ async function Sidebar() {
     <div className="sticky top-20">
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col items-center text-center">
+          <div className="flex flex-col">
             <Link
               href={`/profile/${user.username}`}
-              className="flex flex-col items-center justify-center"
+              className="flex flex-col justify-center"
             >
               <Avatar className="w-20 h-20 border-2 ">
                 <AvatarImage src={authUser.imageUrl || "/avatar.png"} />
@@ -30,7 +30,9 @@ async function Sidebar() {
 
               <div className="mt-4 space-y-1">
                 <h3 className="font-semibold">{user.name}</h3>
-                <p className="text-sm text-muted-foreground">{user.username}</p>
+                <p className="text-sm text-muted-foreground">
+                  @{user.username}
+                </p>
               </div>
             </Link>
 

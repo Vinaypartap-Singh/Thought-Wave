@@ -109,7 +109,7 @@ function ProfilePageClient({
         <div className="w-full max-w-lg">
           <Card className="bg-card">
             <CardContent className="pt-6">
-              <div className="flex flex-col items-center text-center">
+              <div className="flex flex-col">
                 <Avatar className="w-24 h-24">
                   <AvatarImage src={user.image ?? "/avatar.png"} />
                 </Avatar>
@@ -123,7 +123,7 @@ function ProfilePageClient({
                 <div className="w-full mt-6">
                   <div className="flex justify-between mb-4">
                     <div>
-                      <div className="font-semibold">
+                      <div className="font-semibold text-center">
                         {user._count.following.toLocaleString()}
                       </div>
                       <div className="text-sm text-muted-foreground">
@@ -132,7 +132,7 @@ function ProfilePageClient({
                     </div>
                     <Separator orientation="vertical" />
                     <div>
-                      <div className="font-semibold">
+                      <div className="font-semibold text-center">
                         {user._count.followers.toLocaleString()}
                       </div>
                       <div className="text-sm text-muted-foreground">
@@ -141,7 +141,7 @@ function ProfilePageClient({
                     </div>
                     <Separator orientation="vertical" />
                     <div>
-                      <div className="font-semibold">
+                      <div className="font-semibold text-center">
                         {user._count.posts.toLocaleString()}
                       </div>
                       <div className="text-sm text-muted-foreground">Posts</div>
