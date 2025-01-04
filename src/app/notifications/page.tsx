@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { HeartIcon, MessageCircleIcon, UserPlusIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link"; // Import Link component
 
 import { useEffect, useState } from "react";
 
@@ -83,7 +84,7 @@ function NotificationsPage() {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`flex items-start gap-4 p-4 border-b hover:bg-muted/25 transition-colors ${
+                  className={`flex items-start gap-4 p-4 border-b hover:bg-muted/25 transition-colors relative ${
                     !notification.read ? "bg-muted/50" : ""
                   }`}
                 >
@@ -139,6 +140,16 @@ function NotificationsPage() {
                         addSuffix: true,
                       })}
                     </p>
+
+                    {/* Add View Profile Button for FOLLOW notification */}
+                    {notification.type === "FOLLOW" && (
+                      <Link
+                        href={`/profile/${notification.creator.username}`}
+                        className="mt-2 inline-block text-sm text-blue-500 hover:underline"
+                      >
+                        View Profile
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))
