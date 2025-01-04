@@ -2,8 +2,12 @@ import { getPostById } from "@/actions/post.action";
 import { getDbUserID } from "@/actions/user.action";
 import PostCard from "@/components/PostCard";
 
-export default async function Post({ params }: { params: { postId: string } }) {
-  const postId = params.postId;
+export default async function Post({
+  params,
+}: {
+  params: Promise<{ postId: string }>;
+}) {
+  const postId = (await params).postId;
   const post = await getPostById(postId);
   const dbUserId = await getDbUserID();
 
