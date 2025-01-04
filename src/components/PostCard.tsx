@@ -16,6 +16,7 @@ import {
   HeartIcon,
   LogInIcon,
   MessageCircleIcon,
+  Send,
   SendIcon,
 } from "lucide-react";
 import { Textarea } from "./ui/textarea";
@@ -23,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import Image from "next/image";
+import { ShareButton } from "./ShareButton";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];
@@ -210,6 +212,8 @@ function PostCard({
               />
               <span>{post.comments.length}</span>
             </Button>
+
+            <ShareButton postId={post.id} />
           </div>
 
           {/* COMMENTS SECTION */}

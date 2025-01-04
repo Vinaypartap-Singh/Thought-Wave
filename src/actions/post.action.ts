@@ -29,6 +29,12 @@ export async function createPost(content: string, image: string) {
 export async function getPosts() {
     try {
         const posts = await prisma.post.findMany({
+            where:
+            {
+                author: {
+                    profileType: "PUBLIC"
+                }
+            },
             orderBy: {
                 createdAt: "desc",
             },
