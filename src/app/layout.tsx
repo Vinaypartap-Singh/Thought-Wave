@@ -6,6 +6,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Sidebar from "@/components/Sidebar";
+import { Toaster } from "@/components/ui/toaster";
 
 const font = Roboto({
   weight: ["400", "500", "700", "900"],
@@ -46,6 +47,7 @@ export default async function RootLayout({
                       <Sidebar />
                     </div>
                     <div className="lg:col-span-9">{children}</div>
+                    <Toaster />
                   </div>
                 </div>
               </main>
