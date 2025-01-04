@@ -106,7 +106,7 @@ function ProfilePageClient({
   return (
     <div className="max-w-3xl mx-auto">
       <div className="grid grid-cols-1 gap-6">
-        <div className="w-full max-w-lg mx-auto">
+        <div className="w-full max-w-lg">
           <Card className="bg-card">
             <CardContent className="pt-6">
               <div className="flex flex-col items-center text-center">
