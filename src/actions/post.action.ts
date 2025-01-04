@@ -83,6 +83,64 @@ export async function getPosts() {
     }
 }
 
+export async function getPostById(postId: string) {
+    try {
+        const post = await prisma.post.findUnique({
+            where: {
+                id: postId, // Use the postId to fetch a specific post
+            },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        username: true,
+                        profileType: true, // Include profileType in the author data
+                    },
+                },
+                comments: {
+                    include: {
+                        author: {
+                            select: {
+                                id: true,
+                                username: true,
+                                image: true,
+                                name: true,
+                            },
+                        },
+                    },
+                    orderBy: {
+                        createdAt: "asc",
+                    },
+                },
+                likes: {
+                    select: {
+                        userId: true,
+                    },
+                },
+                _count: {
+                    select: {
+                        likes: true,
+                        comments: true,
+                    },
+                },
+            },
+        });
+
+        // Check if the post exists and if the author has a public profile
+        if (!post || post.author.profileType !== "PUBLIC") {
+            throw new Error("Post not found or author is not public");
+        }
+
+        return post;
+    } catch (error) {
+        console.log("Error in getPostById", error);
+        throw new Error("Failed to fetch post");
+    }
+}
+
+
 export async function toggleLike(postId: string) {
     try {
         const userId = await getDbUserID();
