@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import {
   getProfileByUsername,
   getPublicUserInfo,
@@ -5,8 +6,7 @@ import {
   getUserPosts,
   isFollowing,
 } from "@/actions/profile.action";
-import { notFound } from "next/navigation";
-import ProfilePageClient from "./ProfilePageClient";
+import UserProfile from "./UserProfileClient";
 
 // Metadata generation
 export async function generateMetadata({ params }: any) {
@@ -25,14 +25,16 @@ async function ProfilePageServer({ params }: any) {
 
   if (!user) notFound();
 
+  const isPublic = user.profileType === "PUBLIC";
+
   const [posts, likedPosts, isCurrentUserFollowing] = await Promise.all([
-    getUserPosts(user.id),
-    getUserLikedPosts(user.id),
-    isFollowing(user.id),
+    isPublic ? getUserPosts(user.id) : Promise.resolve([]),
+    isPublic ? getUserLikedPosts(user.id) : Promise.resolve([]),
+    isPublic ? isFollowing(user.id) : Promise.resolve(false),
   ]);
 
   return (
-    <ProfilePageClient
+    <UserProfile
       user={user}
       posts={posts}
       likedPosts={likedPosts}

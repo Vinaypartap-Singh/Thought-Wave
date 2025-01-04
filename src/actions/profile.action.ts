@@ -18,6 +18,7 @@ export async function getProfileByUsername(username: string) {
                 location: true,
                 website: true,
                 createdAt: true,
+                profileType: true,
                 _count: {
                     select: {
                         followers: true,
@@ -34,6 +35,77 @@ export async function getProfileByUsername(username: string) {
         throw new Error("Failed to fetch profile");
     }
 }
+
+export async function getPublicUserInfo(username: string) {
+    try {
+        // Fetch the user's profile type first
+        const userProfileType = await prisma.user.findUnique({
+            where: { username: username },
+            select: { profileType: true },
+        });
+
+        if (!userProfileType) {
+            throw new Error("User not found");
+        }
+
+        // Define the query based on the profile type
+        const isPublic = userProfileType.profileType === "PUBLIC";
+
+        const user = await prisma.user.findUnique({
+            where: { username: username },
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                bio: true,
+                image: true,
+                location: true,
+                website: true,
+                createdAt: true,
+                profileType: true,
+                _count: {
+                    select: {
+                        followers: true,
+                        following: true,
+                        posts: true,
+                    },
+                },
+                // Include all posts data if the profile is public
+                ...(isPublic && {
+                    posts: {
+                        select: {
+                            id: true,
+                            content: true,   // Full post content
+                            image: true,     // If the post includes an image
+                            createdAt: true, // Post creation date
+                            updatedAt: true, // Post update date
+                            comments: {
+                                select: {
+                                    id: true,
+                                    content: true,
+                                    createdAt: true,
+                                },
+                            },
+                            likes: {
+                                select: {
+                                    userId: true,
+                                    createdAt: true,
+                                },
+                            },
+                        },
+                    },
+                }),
+            },
+        });
+
+        return user;
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        throw new Error("Failed to fetch profile");
+    }
+}
+
+
 
 export async function getUserPosts(userId: string) {
     try {

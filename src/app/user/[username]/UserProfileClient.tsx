@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  getProfileByUsername,
   getPublicUserInfo,
   getUserPosts,
   updateProfile,
 } from "@/actions/profile.action";
 import { toggleFollow } from "@/actions/user.action";
+import FollowButton from "@/components/FollowButton";
 import PostCard from "@/components/PostCard";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,11 +30,13 @@ import { format } from "date-fns";
 import {
   CalendarIcon,
   EditIcon,
+  ExternalLink,
   FileTextIcon,
   HeartIcon,
   LinkIcon,
   MapPinIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 type User = Awaited<ReturnType<typeof getPublicUserInfo>>;
@@ -45,7 +49,7 @@ interface ProfilePageClientProps {
   isFollowing: boolean;
 }
 
-function ProfilePageClient({
+function UserProfile({
   isFollowing: initialIsFollowing,
   likedPosts,
   posts,
@@ -81,7 +85,7 @@ function ProfilePageClient({
   };
 
   const handleFollow = async () => {
-    if (!currentUser) return;
+    if (!currentUser) return toast({ title: "Please sign in to follow" });
 
     try {
       setIsUpdatingFollow(true);
@@ -150,17 +154,12 @@ function ProfilePageClient({
                 </div>
 
                 {/* "FOLLOW & EDIT PROFILE" BUTTONS */}
-                {!currentUser ? (
-                  <SignInButton mode="modal">
-                    <Button className="w-full mt-4">Follow</Button>
-                  </SignInButton>
-                ) : isOwnProfile ? (
-                  <Button
-                    className="w-full mt-4"
-                    onClick={() => setShowEditDialog(true)}
-                  >
-                    <EditIcon className="size-4 mr-2" />
-                    Edit Profile
+                {currentUser && isOwnProfile ? (
+                  <Button className="w-full mt-4" asChild>
+                    <Link href={`/user/${user.username}`}>
+                      <ExternalLink className="size-4 mr-2" />
+                      View Your Profile{" "}
+                    </Link>
                   </Button>
                 ) : (
                   <Button
@@ -236,7 +235,7 @@ function ProfilePageClient({
                 ))
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No posts yet
+                  No posts yet or the account maybe private by user
                 </div>
               )}
             </div>
@@ -321,4 +320,4 @@ function ProfilePageClient({
     </div>
   );
 }
-export default ProfilePageClient;
+export default UserProfile;
