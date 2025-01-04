@@ -22,11 +22,18 @@ import { Textarea } from "./ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { DeleteAlertDialog } from "./DeleteAlertDialog";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import Image from "next/image";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];
 
-function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
+function PostCard({
+  post,
+  dbUserId,
+}: {
+  post: Post;
+  dbUserId: string | null | undefined;
+}) {
   const { toast } = useToast();
   const { user } = useUser();
   const [newComment, setNewComment] = useState("");
@@ -147,10 +154,12 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           {/* POST IMAGE */}
           {post.image && (
             <div className="rounded-lg overflow-hidden">
-              <img
+              <Image
                 src={post.image}
                 alt="Post content"
                 className="w-full h-auto object-cover"
+                width={500}
+                height={500}
               />
             </div>
           )}

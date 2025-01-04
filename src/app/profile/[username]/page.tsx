@@ -1,16 +1,14 @@
+import { notFound } from "next/navigation";
+import ProfilePageClient from "./ProfilePageClient";
 import {
   getProfileByUsername,
   getUserLikedPosts,
   getUserPosts,
   isFollowing,
 } from "@/actions/profile.action";
-import { notFound } from "next/navigation";
-import ProfilePageClient from "./ProfilePageClient";
-export async function generateMetadata({
-  params,
-}: {
-  params: { username: string };
-}) {
+
+// Metadata generation
+export async function generateMetadata({ params }: any) {
   const user = await getProfileByUsername(params.username);
   if (!user) return;
 
@@ -20,7 +18,8 @@ export async function generateMetadata({
   };
 }
 
-async function ProfilePageServer({ params }: { params: { username: string } }) {
+// Server component
+async function ProfilePageServer({ params }: any) {
   const user = await getProfileByUsername(params.username);
 
   if (!user) notFound();
@@ -40,4 +39,5 @@ async function ProfilePageServer({ params }: { params: { username: string } }) {
     />
   );
 }
+
 export default ProfilePageServer;

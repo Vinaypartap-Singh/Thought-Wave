@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { HeartIcon, MessageCircleIcon, UserPlusIcon } from "lucide-react";
+import Image from "next/image";
 
 import { useEffect, useState } from "react";
 
@@ -49,6 +50,7 @@ function NotificationsPage() {
       } catch (error) {
         toast({
           title: "Failed to fetch notifications",
+          description: error instanceof Error ? error.message : String(error),
         });
       } finally {
         setIsLoading(false);
@@ -113,10 +115,12 @@ function NotificationsPage() {
                           <div className="text-sm text-muted-foreground rounded-md p-2 bg-muted/30 mt-2">
                             <p>{notification.post.content}</p>
                             {notification.post.image && (
-                              <img
+                              <Image
                                 src={notification.post.image}
                                 alt="Post content"
                                 className="mt-2 rounded-md w-full max-w-[200px] h-auto object-cover"
+                                width={500}
+                                height={500}
                               />
                             )}
                           </div>

@@ -90,7 +90,7 @@ function ProfilePageClient({
     } catch (error) {
       toast({
         title: "Failed to update follow status",
-        description: "An error occurred while updating follow status",
+        description: error instanceof Error ? error.message : String(error),
       });
     } finally {
       setIsUpdatingFollow(false);
