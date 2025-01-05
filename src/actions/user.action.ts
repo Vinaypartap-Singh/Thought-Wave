@@ -94,6 +94,7 @@ export async function getRandomUsers() {
                         },
                     },
                 ],
+                profileType: "PUBLIC",
             },
             select: {
                 id: true,

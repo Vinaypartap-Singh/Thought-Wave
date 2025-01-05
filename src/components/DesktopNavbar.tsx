@@ -4,9 +4,11 @@ import { Bell, Home, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
+import { getNotifications } from "@/actions/notification.action";
 
 export default async function DesktopNavbar() {
   const user = await currentUser();
+
   return (
     <header className="hidden md:flex items-center space-x-4">
       <ThemeToggle />
@@ -22,7 +24,7 @@ export default async function DesktopNavbar() {
         <>
           <Button variant="ghost" className="flex items-center gap-2" asChild>
             <Link href="/notifications">
-              <Bell className="w-4 h-4" />
+              <Bell className=" w-4 h-4" />
               <span className="hidden lg:inline">Notifications</span>
             </Link>
           </Button>
