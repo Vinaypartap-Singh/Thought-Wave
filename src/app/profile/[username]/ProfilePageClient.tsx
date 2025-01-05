@@ -19,6 +19,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,6 +52,11 @@ interface ProfilePageClientProps {
   isFollowing: boolean;
 }
 
+export enum ProfileType {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
+
 function ProfilePageClient({
   isFollowing: initialIsFollowing,
   likedPosts,
@@ -62,6 +74,7 @@ function ProfilePageClient({
     bio: user.bio || "",
     location: user.location || "",
     website: user.website || "",
+    profileType: (user.profileType as ProfileType) || ProfileType.PUBLIC,
   });
 
   const handleEditSubmit = async () => {
@@ -308,6 +321,28 @@ function ProfilePageClient({
                   }
                   placeholder="Your personal website"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Profile Type</Label>
+                <Select
+                  name="profileType"
+                  value={editForm.profileType}
+                  onValueChange={(value) =>
+                    setEditForm({
+                      ...editForm,
+                      profileType: value as ProfileType,
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a timezone" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ProfileType.PUBLIC}>Public</SelectItem>
+                    <SelectItem value={ProfileType.PRIVATE}>Private</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="flex justify-end gap-3">

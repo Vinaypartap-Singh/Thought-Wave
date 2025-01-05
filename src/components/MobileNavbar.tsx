@@ -2,6 +2,7 @@
 
 import {
   BellIcon,
+  FileText,
   HomeIcon,
   LogOutIcon,
   MenuIcon,
@@ -18,7 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
-import { useAuth, SignInButton, SignOutButton } from "@clerk/nextjs";
+import { useAuth, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -26,6 +27,7 @@ function MobileNavbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { isSignedIn } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { user } = useUser();
 
   return (
     <div className="flex md:hidden items-center space-x-2">
@@ -62,6 +64,17 @@ function MobileNavbar() {
               </Link>
             </Button>
 
+            <Button
+              variant="ghost"
+              className="flex items-center justify-start gap-2"
+              asChild
+            >
+              <a href="https://daily1blog.netlify.app/" target="_blank">
+                <FileText className="w-4 h-4" />
+                Blogs
+              </a>
+            </Button>
+
             {isSignedIn ? (
               <>
                 <Button
@@ -79,10 +92,17 @@ function MobileNavbar() {
                   className="flex items-center gap-3 justify-start"
                   asChild
                 >
-                  <Link href="/profile">
-                    <UserIcon className="w-4 h-4" />
-                    Profile
-                  </Link>
+                  {user && (
+                    <Link
+                      href={`/profile/${
+                        user.username ??
+                        user.emailAddresses[0].emailAddress.split("@")[0]
+                      }`}
+                    >
+                      <UserIcon className="w-4 h-4" />
+                      Profile
+                    </Link>
+                  )}
                 </Button>
                 <SignOutButton>
                   <Button
