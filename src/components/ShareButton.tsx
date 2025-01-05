@@ -1,5 +1,6 @@
 import { Copy, Send } from "lucide-react";
 
+import { sharePostCount } from "@/actions/post.action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { sharePostCount } from "@/actions/post.action";
 
 export function ShareButton({
   postId,

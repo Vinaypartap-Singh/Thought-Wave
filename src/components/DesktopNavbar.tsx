@@ -4,7 +4,6 @@ import { Bell, FileText, Home, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
-import { getNotifications } from "@/actions/notification.action";
 
 export default async function DesktopNavbar() {
   const user = await currentUser();

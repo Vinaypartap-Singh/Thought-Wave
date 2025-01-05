@@ -1,13 +1,11 @@
 "use client";
 
 import {
-  getProfileByUsername,
   getPublicUserInfo,
   getUserPosts,
   updateProfile,
 } from "@/actions/profile.action";
 import { toggleFollow } from "@/actions/user.action";
-import FollowButton from "@/components/FollowButton";
 import PostCard from "@/components/PostCard";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,11 +23,10 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
 import {
   CalendarIcon,
-  EditIcon,
   ExternalLink,
   FileTextIcon,
   HeartIcon,

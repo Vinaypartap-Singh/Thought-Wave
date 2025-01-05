@@ -1,12 +1,12 @@
-import { currentUser } from "@clerk/nextjs/server";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { getUserByClerkId } from "@/actions/user.action";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
-import { Button } from "./ui/button";
+import { currentUser } from "@clerk/nextjs/server";
+import { LinkIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
-import { LinkIcon, MapPinIcon } from "lucide-react";
-import { getUserByClerkId } from "@/actions/user.action";
 
 async function Sidebar() {
   const authUser = await currentUser();

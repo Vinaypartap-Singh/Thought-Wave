@@ -6,25 +6,24 @@ import {
   getPosts,
   toggleLike,
 } from "@/actions/post.action";
+import { useToast } from "@/hooks/use-toast";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { useState } from "react";
-import { Card, CardContent } from "./ui/card";
-import Link from "next/link";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import {
   HeartIcon,
   LogInIcon,
   MessageCircleIcon,
-  Send,
   SendIcon,
 } from "lucide-react";
-import { Textarea } from "./ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { DeleteAlertDialog } from "./DeleteAlertDialog";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { DeleteAlertDialog } from "./DeleteAlertDialog";
 import { ShareButton } from "./ShareButton";
+import { Avatar, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Textarea } from "./ui/textarea";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];

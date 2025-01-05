@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
+import BottomNavigation from "@/components/BottomNavigationMobile";
 
 const font = Roboto({
   weight: ["400", "500", "700", "900"],
@@ -67,6 +68,7 @@ export default async function RootLayout({
                   </div>
                 </div>
               </main>
+              <BottomNavigation />
             </div>
             {/* <Toaster /> */}
           </ThemeProvider>

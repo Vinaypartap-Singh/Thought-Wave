@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import {
   getProfileByUsername,
   getPublicUserInfo,
@@ -6,6 +5,7 @@ import {
   getUserPosts,
   isFollowing,
 } from "@/actions/profile.action";
+import { notFound } from "next/navigation";
 import UserProfile from "./UserProfileClient";
 
 // Metadata generation
