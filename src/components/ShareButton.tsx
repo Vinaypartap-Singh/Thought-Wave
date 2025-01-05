@@ -51,12 +51,6 @@ export function ShareButton({
   const handleShare = async () => {
     try {
       const result = await sharePostCount(postId, userId);
-      if (result?.success) {
-        toast({
-          title: "Share Link Copied",
-          description: "The link has been copied to your clipboard.",
-        });
-      }
     } catch (error) {
       toast({
         variant: "destructive",
