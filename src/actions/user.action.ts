@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 
@@ -107,7 +108,7 @@ export async function getRandomUsers() {
                     },
                 },
             },
-            take: 3,
+            take: 5,
         });
 
         return randomUsers;
@@ -243,4 +244,60 @@ export async function getFollowingByUsername(username: string) {
             },
         },
     });
+}
+
+
+export async function searchUsers(searchQuery: string = "") {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) return [];
+
+        // Default search filter, if no searchQuery is provided, return all users
+        const searchFilter: Prisma.UserWhereInput = searchQuery
+            ? {
+                OR: [
+                    { name: { contains: searchQuery, mode: 'insensitive' } }, // 'insensitive' for case-insensitive search
+                    { username: { contains: searchQuery, mode: 'insensitive' } },
+                ],
+            }
+            : {}; // Empty filter if no search query is provided
+
+        // Fetch users based on the search criteria or return all users by default
+        const users = await prisma.user.findMany({
+            where: {
+                AND: [
+                    { NOT: { id: userId } }, // Exclude the current user
+                    {
+                        NOT: {
+                            followers: {
+                                some: {
+                                    followerId: userId,
+                                },
+                            },
+                        }, // Exclude users that the current user is already following
+                    },
+                    searchFilter, // Apply the search filter if searchQuery is provided
+                ],
+                profileType: "PUBLIC", // Ensure only public profiles are shown
+            },
+            select: {
+                id: true,
+                name: true,
+                username: true,
+                image: true,
+                _count: {
+                    select: {
+                        followers: true,
+                    },
+                },
+            },
+            take: 3, // Fetch only 3 users
+        });
+
+        return users;
+    } catch (error) {
+        console.log("Error fetching searched users", error);
+        return [];
+    }
 }
