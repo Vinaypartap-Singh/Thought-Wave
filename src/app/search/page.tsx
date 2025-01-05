@@ -4,10 +4,15 @@ import { searchUsers } from "@/actions/user.action";
 import { useEffect, useState } from "react";
 import SearchCard from "./_components/SearchCard";
 import Loader from "@/components/Loader";
+import { SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
+import { UnAuthenticatedSidebar } from "@/components/Sidebar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type Posts = Awaited<ReturnType<typeof searchUsers>>;
 
 export default function Search() {
+  const { user } = useUser();
   const [search, setSearch] = useState(""); // State to store search query
   const [results, setResults] = useState<Posts>([]); // State to store search results
   const [loading, setLoading] = useState(false); // Loading state
@@ -37,6 +42,35 @@ export default function Search() {
   useEffect(() => {
     handleSearch(); // Trigger the search whenever the search query changes
   }, [search]);
+
+  if (!user)
+    return (
+      <div>
+        <p>Please Login Your Account to Access This Page</p>
+        <Card className="md:hidden">
+          <CardHeader>
+            <CardTitle className="text-center text-xl font-semibold">
+              Welcome Back!
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground mb-4">
+              Login to access your profile and connect with others.
+            </p>
+            <SignInButton mode="modal">
+              <Button className="w-full" variant="outline">
+                Login
+              </Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button className="w-full mt-2" variant="default">
+                Sign Up
+              </Button>
+            </SignUpButton>
+          </CardContent>
+        </Card>
+      </div>
+    );
 
   return (
     <div className="p-4">

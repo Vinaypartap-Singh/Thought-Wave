@@ -10,7 +10,10 @@ import { Separator } from "./ui/separator";
 
 async function Sidebar() {
   const authUser = await currentUser();
-  if (!authUser) return <UnAuthenticatedSidebar />;
+  if (!authUser)
+    return (
+      <UnAuthenticatedSidebar message="Login to access your profile and connect with others." />
+    );
 
   const user = await getUserByClerkId(authUser.id);
   if (!user) return null;
@@ -85,7 +88,7 @@ async function Sidebar() {
 
 export default Sidebar;
 
-const UnAuthenticatedSidebar = () => (
+export const UnAuthenticatedSidebar = ({ message }: { message: string }) => (
   <div className="sticky top-20">
     <Card>
       <CardHeader>
@@ -95,7 +98,9 @@ const UnAuthenticatedSidebar = () => (
       </CardHeader>
       <CardContent>
         <p className="text-center text-muted-foreground mb-4">
-          Login to access your profile and connect with others.
+          {message
+            ? message
+            : "Login to access your profile and connect with others."}
         </p>
         <SignInButton mode="modal">
           <Button className="w-full" variant="outline">

@@ -319,3 +319,50 @@ export async function sharePostCount(postId: string, userId: string) {
         return { success: false, error: "Failed to update share count" };
     }
 }
+
+
+
+export async function getFeedPosts() {
+    try {
+        const posts = await prisma.post.findMany({
+            where: {
+                AND: [
+                    {
+                        image: {
+                            not: ""
+                        },
+                    },
+                    {
+                        author: {
+                            profileType: "PUBLIC"
+                        }
+                    }
+                ]
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            select: {
+                id: true,
+                content: true,
+                image: true,
+                createdAt: true,
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        username: true,
+                        profileType: true
+                    }
+                }
+            }
+        })
+
+        return posts
+    }
+    catch (error) {
+        console.log("Error in getPosts", error);
+        throw new Error("Failed to fetch posts");
+    }
+}

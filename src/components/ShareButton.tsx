@@ -28,7 +28,7 @@ export function ShareButton({
   const { toast } = useToast();
 
   const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
-  const postLink = `${websiteUrl}/${postId}`;
+  const postLink = `${websiteUrl}/post/${postId}`;
 
   const copyPostUrl = () => {
     navigator.clipboard

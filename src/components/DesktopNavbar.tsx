@@ -1,6 +1,6 @@
 import { SignInButton, UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
-import { Bell, Home, PenLine, Search, User } from "lucide-react";
+import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
@@ -16,6 +16,13 @@ export default async function DesktopNavbar() {
         <Link href="/">
           <Home className="w-4 h-4" />
           <span className="hidden lg:inline">Home</span>
+        </Link>
+      </Button>
+
+      <Button variant="ghost" className="flex items-center gap-2" asChild>
+        <Link href="/feed">
+          <Image className="w-4 h-4" />
+          <span className="hidden lg:inline">Feed</span>
         </Link>
       </Button>
 
