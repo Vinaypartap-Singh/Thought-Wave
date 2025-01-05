@@ -171,3 +171,76 @@ export async function toggleFollow(targetUserId: string) {
         return { success: false, error: "Error toggling follow" };
     }
 }
+
+export async function getFollowersByUsername(username: string) {
+    const user = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+        select: {
+            id: true, // Retrieve the user ID based on the username
+        },
+    });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    return prisma.follows.findMany({
+        where: {
+            followingId: user.id, // Use the user's ID to fetch followers
+        },
+        select: {
+            follower: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true,
+                    _count: {
+                        select: {
+                            followers: true
+                        }
+                    }
+                },
+            },
+        },
+    });
+}
+
+
+export async function getFollowingByUsername(username: string) {
+    const user = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+        select: {
+            id: true, // Retrieve the user ID based on the username
+        },
+    });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    return prisma.follows.findMany({
+        where: {
+            followerId: user.id, // Fetch users that this user is following
+        },
+        select: {
+            following: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    image: true,
+                    _count: {
+                        select: {
+                            followers: true, // Count how many followers each user has
+                        },
+                    },
+                },
+            },
+        },
+    });
+}
