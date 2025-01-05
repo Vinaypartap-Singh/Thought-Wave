@@ -225,7 +225,7 @@ function PostCard({
             <ShareButton
               postId={post.id}
               userId={post.authorId}
-              shareCount={post.shares.length}
+              shareCount={post.shares && post.shares.length}
             />
           </div>
 

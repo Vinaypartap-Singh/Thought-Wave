@@ -219,10 +219,16 @@ export async function getUserLikedPosts(userId: string) {
                         userId: true,
                     },
                 },
+                shares: {
+                    select: {
+                        userId: true,
+                    },
+                },
                 _count: {
                     select: {
                         likes: true,
                         comments: true,
+                        shares: true
                     },
                 },
             },
