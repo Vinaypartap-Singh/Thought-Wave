@@ -6,7 +6,7 @@ import { Button } from "./ui/button";
 export default async function BottomNavigation() {
   const user = await currentUser();
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full bg-background/95 border-t border-gray-200 dark:border-gray-700 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="fixed bottom-0 left-0 z-50 w-full bg-background/95 border-t border-gray-200 dark:border-gray-700 py-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
       <div className="flex justify-between h-full max-w-lg grid-cols-4 mx-auto font-medium">
         <Button
           variant={"link"}
