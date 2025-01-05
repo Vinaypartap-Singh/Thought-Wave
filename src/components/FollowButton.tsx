@@ -23,6 +23,7 @@ function FollowButton({ userId }: { userId: string }) {
       });
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Failed to follow user",
         description: error instanceof Error ? error.message : String(error),
       });

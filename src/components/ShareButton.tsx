@@ -14,8 +14,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { sharePostCount } from "@/actions/post.action";
 
-export function ShareButton({ postId }: { postId: string }) {
+export function ShareButton({
+  postId,
+  userId,
+  shareCount,
+}: {
+  postId: string;
+  userId: string;
+  shareCount: number | string;
+}) {
   const { toast } = useToast();
 
   const websiteUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
@@ -32,10 +41,29 @@ export function ShareButton({ postId }: { postId: string }) {
       })
       .catch((error) => {
         toast({
+          variant: "destructive",
           title: "Error copying link",
           description: error.message,
         });
       });
+  };
+
+  const handleShare = async () => {
+    try {
+      const result = await sharePostCount(postId, userId);
+      if (result?.success) {
+        toast({
+          title: "Share Link Copied",
+          description: "The link has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to share the post",
+        description: "An error occurred while sharing the post.",
+      });
+    }
   };
 
   return (
@@ -45,9 +73,10 @@ export function ShareButton({ postId }: { postId: string }) {
           variant="ghost"
           size="sm"
           className="text-muted-foreground gap-2 hover:text-green-500"
+          onClick={handleShare}
         >
           <Send />
-          <span>0</span>
+          <span>{shareCount ? shareCount : 0}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

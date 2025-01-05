@@ -1,9 +1,10 @@
+// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // Replace with your database provider
   url      = env("DATABASE_URL")
 }
 
@@ -21,14 +22,13 @@ model User {
   createdAt   DateTime    @default(now()) // member since 2020
   updatedAt   DateTime    @updatedAt
 
-  // Relations: 
-  posts    Post[] // One-to-many
-  comments Comment[] // One-to-many
-  likes    Like[] // One-to-many
-
-  followers Follows[] @relation("following") // users who follow this user
-  following Follows[] @relation("follower") // users this user follows
-
+  // Relations
+  posts                Post[] // One-to-many
+  comments             Comment[] // One-to-many
+  likes                Like[] // One-to-many
+  shares               Share[] // One-to-many (new relation for shares)
+  followers            Follows[]      @relation("following") // users who follow this user
+  following            Follows[]      @relation("follower") // users this user follows
   notifications        Notification[] @relation("userNotifications") // notifications received by a user
   notificationsCreated Notification[] @relation("notificationCreator") // notifications triggered by a user
 }
@@ -46,6 +46,7 @@ model Post {
   comments      Comment[]
   likes         Like[]
   notifications Notification[]
+  shares        Share[] // One-to-many (new relation for shares)
 }
 
 model Comment {
@@ -73,7 +74,7 @@ model Like {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, postId]) // this prevents same user liking post twice
+  @@unique([userId, postId]) // prevents same user liking post twice
   @@index([userId, postId]) // composite index for faster queries
 }
 
@@ -88,6 +89,19 @@ model Follows {
 
   @@id([followerId, followingId]) // composite primary key prevents duplicate follows
   @@index([followerId, followingId]) // composite index for faster queries
+}
+
+model Share {
+  id        String   @id @default(cuid()) // Unique ID for the share record
+  userId    String // ID of the user who shared the post
+  postId    String // ID of the post being shared
+  createdAt DateTime @default(now()) // Date and time when the post was shared
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([userId, postId]) // composite index for faster queries
 }
 
 model Notification {

@@ -79,6 +79,7 @@ function PostCard({
       }
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Failed to add comment",
         description: "An error occurred while adding your comment",
       });
@@ -100,6 +101,7 @@ function PostCard({
       else throw new Error(result.error);
     } catch (error: any) {
       toast({
+        variant: "destructive",
         title: "Failed to delete post",
         description:
           (error as Error)?.message ||
@@ -149,22 +151,27 @@ function PostCard({
                   />
                 )}
               </div>
-              <p className="mt-2 text-sm text-foreground break-words">
+              <Link
+                href={`/post/${post.id}`}
+                className="mt-2 text-sm text-foreground break-words"
+              >
                 {post.content}
-              </p>
+              </Link>
             </div>
           </div>
 
           {/* POST IMAGE */}
           {post.image && (
             <div className="rounded-lg overflow-hidden">
-              <Image
-                src={post.image}
-                alt="Post content"
-                className="w-full h-auto object-cover"
-                width={1200}
-                height={1200}
-              />
+              <Link href={`/post/${post.id}`}>
+                <Image
+                  src={post.image}
+                  alt="Post content"
+                  className="w-full h-auto object-cover"
+                  width={1200}
+                  height={1200}
+                />
+              </Link>
             </div>
           )}
 
@@ -215,7 +222,11 @@ function PostCard({
               <span>{post.comments.length}</span>
             </Button>
 
-            <ShareButton postId={post.id} />
+            <ShareButton
+              postId={post.id}
+              userId={post.authorId}
+              shareCount={post.shares.length}
+            />
           </div>
 
           {/* COMMENTS SECTION */}

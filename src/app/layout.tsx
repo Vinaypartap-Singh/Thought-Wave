@@ -1,12 +1,12 @@
 import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import Sidebar from "@/components/Sidebar";
-import { Toaster } from "@/components/ui/toaster";
 
 const font = Roboto({
   weight: ["400", "500", "700", "900"],
@@ -45,7 +45,24 @@ export default async function RootLayout({
                     <div className="hidden lg:block lg:col-span-3">
                       <Sidebar />
                     </div>
-                    <div className="lg:col-span-9">{children}</div>
+                    <div className="lg:col-span-9">
+                      <NextTopLoader
+                        color="#980202"
+                        initialPosition={0.08}
+                        crawlSpeed={200}
+                        height={3}
+                        crawl={true}
+                        showSpinner={true}
+                        easing="ease"
+                        speed={200}
+                        shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                        template='<div class="bar" role="bar"><div class="peg"></div></div> 
+  <div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+                        zIndex={1600}
+                        showAtBottom={false}
+                      />
+                      {children}
+                    </div>
                     <Toaster />
                   </div>
                 </div>

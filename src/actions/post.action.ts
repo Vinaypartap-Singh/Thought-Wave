@@ -67,10 +67,16 @@ export async function getPosts() {
                         userId: true,
                     },
                 },
+                shares: {
+                    select: {
+                        userId: true,
+                    },
+                },
                 _count: {
                     select: {
                         likes: true,
                         comments: true,
+                        shares: true
                     },
                 },
             },
@@ -119,10 +125,16 @@ export async function getPostById(postId: string) {
                         userId: true,
                     },
                 },
+                shares: {
+                    select: {
+                        userId: true,
+                    },
+                },
                 _count: {
                     select: {
                         likes: true,
                         comments: true,
+                        shares: true
                     },
                 },
             },
@@ -275,5 +287,35 @@ export async function deletePost(postId: string) {
     } catch (error) {
         console.error("Failed to delete post:", error);
         return { success: false, error: "Failed to delete post" };
+    }
+}
+
+
+export async function sharePostCount(postId: string, userId: string) {
+    try {
+        // Check if the post exists
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!post) throw new Error("Post not found");
+
+        // Create a new share record
+        await prisma.share.create({
+            data: {
+                postId,
+                userId,
+            },
+        });
+
+        // Optionally return the updated share count
+        const shareCount = await prisma.share.count({
+            where: { postId },
+        });
+
+        return { success: true, shareCount };
+    } catch (error) {
+        console.error("Failed to update share count:", error);
+        return { success: false, error: "Failed to update share count" };
     }
 }

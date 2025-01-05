@@ -92,6 +92,19 @@ export async function getPublicUserInfo(username: string) {
                                     createdAt: true,
                                 },
                             },
+                            shares: {
+                                select: {
+                                    userId: true,
+                                    createdAt: true,
+                                },
+                            },
+                            _count: {
+                                select: {
+                                    likes: true,
+                                    comments: true,
+                                    shares: true,
+                                },
+                            }
                         },
                     },
                 }),
@@ -142,10 +155,16 @@ export async function getUserPosts(userId: string) {
                         userId: true,
                     },
                 },
+                shares: {
+                    select: {
+                        userId: true,
+                    },
+                },
                 _count: {
                     select: {
                         likes: true,
                         comments: true,
+                        shares: true
                     },
                 },
             },

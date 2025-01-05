@@ -93,6 +93,7 @@ function UserProfile({
       setIsFollowing(!isFollowing);
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Failed to update follow status",
         description: error instanceof Error ? error.message : String(error),
       });

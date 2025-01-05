@@ -50,6 +50,7 @@ function NotificationsPage() {
         if (unreadIds.length > 0) await markNotificationsAsRead(unreadIds);
       } catch (error) {
         toast({
+          variant: "destructive",
           title: "Failed to fetch notifications",
           description: error instanceof Error ? error.message : String(error),
         });
