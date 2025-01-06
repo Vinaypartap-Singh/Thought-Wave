@@ -25,24 +25,27 @@ export default async function FeedPage() {
       <h1 className="text-3xl font-semibold mb-4">Feed</h1>
       <div>
         {feed && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Array.from({ length: 4 }).map((_, columnIndex) => (
-              <div key={columnIndex} className="grid gap-4">
-                {feed
-                  .filter((_, index) => index % 4 === columnIndex)
-                  .map((post) => (
-                    <Link href={`/post/${post.id}`} key={post.id}>
-                      <Image
-                        className="h-auto max-w-full rounded-lg"
-                        src={post.image ?? ""}
-                        alt={`Post by ${post.author.name}`}
-                        width={600}
-                        height={600}
-                      />
-                    </Link>
-                  ))}
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {feed.map((post) => (
+              <Link href={`/post/${post.id}`} key={post.id}>
+                <Image
+                  className="h-[410px] max-w-full object-cover rounded-lg"
+                  src={post.image ?? ""}
+                  alt={`Post by ${post.author.name}`}
+                  width={600}
+                  height={600}
+                />
+              </Link>
             ))}
+            {/* // {Array.from({ length: 4 }).map((_, columnIndex) => ( */}
+            {/* //   <div key={columnIndex} className="grid gap-4"> */}
+            {/* //     {feed */}
+            {/* //       .filter((_, index) => index % 4 === columnIndex) */}
+            {/* //       .map((post) => ( */}
+
+            {/* //       ))} */}
+            {/* //   </div> */}
+            {/* // ))} */}
           </div>
         )}
       </div>

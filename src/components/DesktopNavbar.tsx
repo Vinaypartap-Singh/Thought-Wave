@@ -4,9 +4,15 @@ import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
+import { getNotifications } from "@/actions/notification.action";
 
 export default async function DesktopNavbar() {
   const user = await currentUser();
+  const notifications = await getNotifications();
+
+  const unreadNotifications = notifications.filter(
+    (notification) => !notification.read
+  );
 
   return (
     <header className="hidden md:flex items-center space-x-4">
@@ -42,12 +48,28 @@ export default async function DesktopNavbar() {
 
       {user ? (
         <>
-          <Button variant="ghost" className="flex items-center gap-2" asChild>
-            <Link href="/notifications">
-              <Bell className=" w-4 h-4" />
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2 relative"
+            asChild
+          >
+            <Link href="/notifications" className="relative">
+              <Bell
+                className={`w-5 h-5 ${
+                  unreadNotifications.length > 0
+                    ? "fill-red-500 text-red-500"
+                    : "text-gray-500"
+                }`}
+              />
               <span className="hidden lg:inline">Notifications</span>
+              {unreadNotifications.length > 0 && (
+                <span className="absolute -right-1 -top-1 bg-red-500 text-white flex items-center justify-center rounded-full text-xs h-4 w-4">
+                  {unreadNotifications.length}
+                </span>
+              )}
             </Link>
           </Button>
+
           <Button variant="ghost" className="flex items-center gap-2" asChild>
             <Link
               href={`/profile/${
