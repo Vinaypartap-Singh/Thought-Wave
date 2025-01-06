@@ -4,6 +4,7 @@ import {
   getPublicUserInfo,
   getUserPosts,
   updateProfile,
+  updateProfileImage,
 } from "@/actions/profile.action";
 import { toggleFollow } from "@/actions/user.action";
 import PostCard from "@/components/PostCard";
@@ -30,7 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
 import {
   CalendarIcon,
@@ -51,6 +52,7 @@ interface ProfilePageClientProps {
   posts: Posts;
   likedPosts: Posts;
   isFollowing: boolean;
+  currentProfileImage?: string;
 }
 
 export enum ProfileType {
@@ -63,12 +65,14 @@ function ProfilePageClient({
   likedPosts,
   posts,
   user,
+  currentProfileImage,
 }: ProfilePageClientProps) {
   const { toast } = useToast();
   const { user: currentUser } = useUser();
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isUpdatingFollow, setIsUpdatingFollow] = useState(false);
+  const [showProfileImageDialog, setShowProfileImageDialog] = useState(false);
 
   const [editForm, setEditForm] = useState({
     name: user.name || "",
@@ -91,6 +95,29 @@ function ProfilePageClient({
         title: "Profile updated successfully",
         description: "Your profile has been updated successfully",
       });
+    }
+  };
+
+  const handleProfileImageUpdate = async () => {
+    console.log(user);
+    try {
+      const result = await updateProfileImage(
+        currentProfileImage ?? user.image!
+      );
+      if (result.success) {
+        setShowProfileImageDialog(false);
+        toast({
+          title: "Profile image updated successfully",
+          description: "Your profile image has been updated successfully",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to update profile image",
+        description: error instanceof Error ? error.message : String(error),
+      });
+      console.log(error);
     }
   };
 
@@ -170,13 +197,23 @@ function ProfilePageClient({
                     <Button className="w-full mt-4">Follow</Button>
                   </SignInButton>
                 ) : isOwnProfile ? (
-                  <Button
-                    className="w-full mt-4"
-                    onClick={() => setShowEditDialog(true)}
-                  >
-                    <EditIcon className="size-4 mr-2" />
-                    Edit Profile
-                  </Button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Button
+                      className="w-full mt-4"
+                      onClick={() => setShowEditDialog(true)}
+                    >
+                      <EditIcon className="size-4 mr-2" />
+                      Edit Profile
+                    </Button>
+
+                    <Button
+                      className="w-full mt-4"
+                      onClick={() => setShowProfileImageDialog(true)}
+                    >
+                      <EditIcon className="size-4 mr-2" />
+                      Update Profile Image
+                    </Button>
+                  </div>
                 ) : (
                   <Button
                     className="w-full mt-4"
@@ -346,11 +383,40 @@ function ProfilePageClient({
                 </Select>
               </div>
             </div>
+
             <div className="flex justify-end gap-3">
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button onClick={handleEditSubmit}>Save Changes</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog
+          open={showProfileImageDialog}
+          onOpenChange={setShowProfileImageDialog}
+        >
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Update Profile Image</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label>
+                  <span className="text-red-500 font-bold text-lg">Note:</span>{" "}
+                  To update your profile image, click the profile icon in the
+                  top-right corner. Once updated, click here to sync the image
+                  with the database.
+                </Label>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button onClick={handleProfileImageUpdate}>Update Image</Button>
             </div>
           </DialogContent>
         </Dialog>

@@ -7,6 +7,7 @@ import {
 } from "@/actions/profile.action";
 import { notFound } from "next/navigation";
 import ProfilePageClient from "./ProfilePageClient";
+import { currentUser } from "@clerk/nextjs/server";
 
 // Metadata generation
 export async function generateMetadata({ params }: any) {
@@ -31,12 +32,15 @@ async function ProfilePageServer({ params }: any) {
     isFollowing(user.id),
   ]);
 
+  const profileImageCurrent = await currentUser();
+
   return (
     <ProfilePageClient
       user={user}
       posts={posts}
       likedPosts={likedPosts}
       isFollowing={isCurrentUserFollowing}
+      currentProfileImage={profileImageCurrent?.imageUrl}
     />
   );
 }

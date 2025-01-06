@@ -275,6 +275,37 @@ export async function updateProfile(formData: FormData) {
     }
 }
 
+
+export async function updateProfileImage(image: string) {
+    try {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) throw new Error("Unauthorized");
+        const PostUserId = await getDbUserID();
+
+        const user = await prisma.user.update({
+            where: { clerkId },
+            data: {
+                image,
+            },
+        });
+
+        await prisma.post.updateMany({
+            where: {
+                authorId: PostUserId,
+            },
+            data: {
+                authorProfileImage: image
+            }
+        })
+
+        revalidatePath("/profile");
+        return { success: true, user };
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return { success: false, error: "Failed to update profile" };
+    }
+}
+
 export async function isFollowing(userId: string) {
     try {
         const currentUserId = await getDbUserID();

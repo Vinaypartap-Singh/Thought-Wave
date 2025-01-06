@@ -19,7 +19,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
-import { useAuth, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import {
+  useAuth,
+  SignInButton,
+  SignOutButton,
+  useUser,
+  UserButton,
+} from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -124,6 +130,8 @@ function MobileNavbar() {
           </nav>
         </SheetContent>
       </Sheet>
+
+      {user && <UserButton />}
     </div>
   );
 }
