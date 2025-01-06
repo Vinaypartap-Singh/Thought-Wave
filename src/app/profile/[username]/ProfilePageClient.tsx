@@ -152,8 +152,11 @@ function ProfilePageClient({
           <Card className="bg-card">
             <CardContent className="pt-6">
               <div className="flex flex-col">
-                <Avatar className="w-24 h-24">
-                  <AvatarImage src={user.image ?? "/avatar.png"} />
+                <Avatar className="w-24 h-24 object-cover">
+                  <AvatarImage
+                    src={user.image ?? "/avatar.png"}
+                    className="object-cover"
+                  />
                 </Avatar>
                 <h1 className="mt-4 text-2xl font-bold">
                   {user.name ?? user.username}
