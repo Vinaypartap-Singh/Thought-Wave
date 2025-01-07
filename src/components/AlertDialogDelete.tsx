@@ -14,19 +14,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface DeleteAlertDialogProps {
-  isDeleting: boolean;
-  onDelete: () => Promise<void>;
+interface AlertDialogCustomProps {
+  isLoading: boolean;
+  btnFunction: () => Promise<void>;
   title?: string;
   description?: string;
 }
 
-export function DeleteAlertDialog({
-  isDeleting,
-  onDelete,
+export function AlertDialogDelete({
+  isLoading,
+  btnFunction,
   title = "Delete Post",
   description = "This action cannot be undone.",
-}: DeleteAlertDialogProps) {
+}: AlertDialogCustomProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -35,7 +35,7 @@ export function DeleteAlertDialog({
           size="sm"
           className="text-muted-foreground hover:text-red-500 -mr-2"
         >
-          {isDeleting ? (
+          {isLoading ? (
             <Loader2Icon className="size-4 animate-spin" />
           ) : (
             <Trash2Icon className="size-4" />
@@ -50,11 +50,11 @@ export function DeleteAlertDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onDelete}
+            onClick={btnFunction}
             className="bg-red-500 hover:bg-red-600"
-            disabled={isDeleting}
+            disabled={isLoading}
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isLoading ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

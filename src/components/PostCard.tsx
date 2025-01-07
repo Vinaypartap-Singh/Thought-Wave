@@ -5,25 +5,51 @@ import {
   deletePost,
   getPosts,
   toggleLike,
+  updatePost,
 } from "@/actions/post.action";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import {
   HeartIcon,
+  Loader2Icon,
   LogInIcon,
   MessageCircleIcon,
+  NotebookPen,
   SendIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { DeleteAlertDialog } from "./DeleteAlertDialog";
+import { AlertDialogDelete } from "./AlertDialogDelete";
 import { ShareButton } from "./ShareButton";
 import { Avatar, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Textarea } from "./ui/textarea";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import UpdatePost from "./UpdatePost";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];
@@ -43,6 +69,7 @@ function PostCard({
   const [isCommenting, setIsCommenting] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
   const [hasLiked, setHasLiked] = useState(
     post.likes.some((like) => like.userId === dbUserId)
   );
@@ -152,9 +179,17 @@ function PostCard({
                 </div>
                 {/* Check if current user is the post author */}
                 {dbUserId === post.author.id && (
-                  <DeleteAlertDialog
-                    isDeleting={isDeleting}
-                    onDelete={handleDeletePost}
+                  <AlertDialogDelete
+                    isLoading={isDeleting}
+                    btnFunction={handleDeletePost}
+                  />
+                )}
+
+                {dbUserId === post.author.id && (
+                  <UpdatePost
+                    postId={post.id}
+                    oldContent={post.content ?? "No Content"}
+                    // oldImage={post.image}
                   />
                 )}
               </div>

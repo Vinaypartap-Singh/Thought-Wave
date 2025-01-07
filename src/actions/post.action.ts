@@ -290,6 +290,38 @@ export async function deletePost(postId: string) {
     }
 }
 
+export async function updatePost(postId: string, content?: string, image?: string) {
+    try {
+        const userId = await getDbUserID();
+
+        // Fetch the post to check existence and ownership, and retrieve current values
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            select: { authorId: true, content: true, image: true },
+        });
+
+        if (!post) throw new Error("Post not found");
+        if (post.authorId !== userId) throw new Error("Unauthorized - no update permission");
+
+        // Fallback to existing values if new ones are not provided
+        const updatedContent = content === "" ? post.content : content;
+        const updatedImage = image === "" ? post.image : image;
+
+        // Perform the update with the updated values
+        await prisma.post.update({
+            where: { id: postId },
+            data: { content: updatedContent, image: updatedImage },
+        });
+
+        revalidatePath(`/`);
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update post:", error);
+        return { success: false, error: "Failed to update post" };
+    }
+}
+
+
 
 export async function sharePostCount(postId: string, userId: string) {
     try {
