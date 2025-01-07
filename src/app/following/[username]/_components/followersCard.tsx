@@ -17,9 +17,9 @@ export default function followingsCard({ users }: { users: any }) {
         <div className="space-y-6">
           {users.length > 0 ? (
             <div className="grid gap-4">
-              {users.map((user: any) => (
+              {users.map((user: any, index: number) => (
                 <div
-                  key={user.id}
+                  key={index}
                   className="flex gap-4 items-center justify-between border-b pb-4 last:border-b-0"
                 >
                   <div className="flex items-center gap-3">
@@ -32,7 +32,7 @@ export default function followingsCard({ users }: { users: any }) {
                         alt={`${user.following.name}'s avatar`}
                         width={48}
                         height={48}
-                        className="rounded-full border border-gray-200"
+                        className="rounded-full border border-gray-200 h-12 w-12 object-cover object-center"
                       />
                     </Link>
                     <div>
