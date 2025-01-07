@@ -29,6 +29,15 @@ export default async function RootLayout({
   return (
     <ClerkProvider dynamic>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/favicons/apple-touch-icon.png"
+          />
+          {/* Standard Favicon */}
+          <link rel="icon" href="/favicons/favicon.ico" />
+        </head>
         <body className={`${font.variable} antialiased`}>
           <ThemeProvider
             attribute="class"
