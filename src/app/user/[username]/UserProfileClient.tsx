@@ -106,14 +106,17 @@ function UserProfile({
   const formattedDate = format(new Date(user.createdAt), "MMMM yyyy");
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-lg mx-auto w-full">
       <div className="grid grid-cols-1 gap-6">
         <div className="w-full max-w-lg">
           <Card className="bg-card">
             <CardContent className="pt-6">
               <div className="flex flex-col">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={user.image ?? "/avatar.png"} />
+                  <AvatarImage
+                    src={user.image ?? "/avatar.png"}
+                    className="object-cover"
+                  />
                 </Avatar>
                 <h1 className="mt-4 text-2xl font-bold">
                   {user.name ?? user.username}

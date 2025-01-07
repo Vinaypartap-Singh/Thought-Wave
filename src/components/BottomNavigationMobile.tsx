@@ -1,12 +1,14 @@
-import { currentUser } from "@clerk/nextjs/server";
+"use client"; // Ensures this component is client-side
+
+import { useNotifications } from "@/app/hooks/useNotificationRealtime";
+import { useUser } from "@clerk/nextjs"; // Use useUser for client-side
 import { Bell, Home, Image, Search, User } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { getNotifications } from "@/actions/notification.action";
 
-export default async function BottomNavigation() {
-  const user = await currentUser();
-  const notifications = await getNotifications();
+export default function BottomNavigation() {
+  const { user } = useUser(); // Use Clerk's client-side hook to fetch user data
+  const { notifications } = useNotifications(); // Use the custom hook for notifications
 
   const unreadNotifications = notifications.filter(
     (notification) => !notification.read
@@ -18,7 +20,7 @@ export default async function BottomNavigation() {
         <Button
           variant={"link"}
           type="button"
-          className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+          className="inline-flex flex-col items-center justify-center px-5 group"
           asChild
         >
           <Link href={`/`}>
@@ -31,7 +33,7 @@ export default async function BottomNavigation() {
         <Button
           variant={"link"}
           type="button"
-          className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+          className="inline-flex flex-col items-center justify-center px-5 group"
           asChild
         >
           <Link href={`/feed`}>
@@ -44,7 +46,7 @@ export default async function BottomNavigation() {
         <Button
           variant={"link"}
           type="button"
-          className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+          className="inline-flex flex-col items-center justify-center px-5 group"
           asChild
         >
           <Link href={`/search`}>
@@ -57,7 +59,7 @@ export default async function BottomNavigation() {
         <Button
           variant="link"
           type="button"
-          className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group relative"
+          className="inline-flex flex-col items-center justify-center px-5 group relative"
           asChild
         >
           <Link href={`/notifications`}>
@@ -82,7 +84,7 @@ export default async function BottomNavigation() {
           <Button
             variant={"link"}
             type="button"
-            className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+            className="inline-flex flex-col items-center justify-center px-5 group"
             asChild
           >
             <Link
@@ -100,7 +102,7 @@ export default async function BottomNavigation() {
           <Button
             variant={"link"}
             type="button"
-            className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
+            className="inline-flex flex-col items-center justify-center px-5 group"
             asChild
           >
             <Link href={`/sign-in`}>

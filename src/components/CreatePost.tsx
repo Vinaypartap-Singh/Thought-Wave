@@ -5,19 +5,41 @@ import { useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Textarea } from "./ui/textarea";
-import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
+import { ImageIcon, Loader2Icon, SendIcon, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { createPost } from "@/actions/post.action";
-import ImageUpload from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { uploadImageToSupabase } from "@/lib/uploadImageToSupabase"; // Adjust the path as needed
 
 function CreatePost() {
   const { toast } = useToast();
   const { user } = useUser();
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
-  const [showImageUpload, setShowImageUpload] = useState(false);
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    try {
+      const url = await uploadImageToSupabase(file);
+      if (url) {
+        setImageUrl(url);
+        toast({ title: "Image uploaded successfully" });
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast({ title: "Failed to upload image", variant: "destructive" });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!content.trim() && !imageUrl) return;
@@ -26,10 +48,9 @@ function CreatePost() {
     try {
       const result = await createPost(content, imageUrl);
       if (result?.success) {
-        // reset the form
+        // Reset the form
         setContent("");
         setImageUrl("");
-        setShowImageUpload(false);
 
         toast({ title: "Post created successfully" });
       }
@@ -46,8 +67,11 @@ function CreatePost() {
       <CardContent className="pt-6">
         <div className="space-y-4">
           <div className="flex space-x-4">
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={user?.imageUrl || "/avatar.png"} />
+            <Avatar className="size-12">
+              <AvatarImage
+                src={user?.imageUrl || "/avatar.png"}
+                className="object-cover"
+              />
             </Avatar>
             <Textarea
               placeholder="What's on your mind?"
@@ -58,16 +82,20 @@ function CreatePost() {
             />
           </div>
 
-          {(showImageUpload || imageUrl) && (
-            <div className="border rounded-lg p-4">
-              <ImageUpload
-                endpoint="postImage"
-                value={imageUrl}
-                onChange={(url) => {
-                  setImageUrl(url);
-                  if (!url) setShowImageUpload(false);
-                }}
+          {imageUrl && (
+            <div className="relative size-40">
+              <img
+                src={imageUrl}
+                alt="Uploaded"
+                className="rounded-md size-40 object-cover"
               />
+              <button
+                onClick={() => setImageUrl("")}
+                className="absolute top-0 right-0 p-1 bg-red-500 rounded-full shadow-sm"
+                type="button"
+              >
+                <X className="size-4" />
+              </button>
             </div>
           )}
 
@@ -78,17 +106,26 @@ function CreatePost() {
                 variant="ghost"
                 size="sm"
                 className="text-muted-foreground hover:text-primary"
-                onClick={() => setShowImageUpload(!showImageUpload)}
-                disabled={isPosting}
+                disabled={isUploading || isPosting}
               >
-                <ImageIcon className="size-4 mr-2" />
-                Photo
+                <label className="cursor-pointer flex items-center">
+                  <ImageIcon className="size-4 mr-2" />
+                  <span>Photo</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
               </Button>
             </div>
             <Button
               className="flex items-center"
               onClick={handleSubmit}
-              disabled={(!content.trim() && !imageUrl) || isPosting}
+              disabled={
+                (!content.trim() && !imageUrl) || isPosting || isUploading
+              }
             >
               {isPosting ? (
                 <>
@@ -108,4 +145,5 @@ function CreatePost() {
     </Card>
   );
 }
+
 export default CreatePost;

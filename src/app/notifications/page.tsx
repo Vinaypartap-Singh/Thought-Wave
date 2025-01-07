@@ -1,23 +1,15 @@
 "use client";
 
-import {
-  getNotifications,
-  markNotificationsAsRead,
-} from "@/actions/notification.action";
+// pages/notifications.tsx
 import { NotificationsSkeleton } from "@/components/NotificationSkeleton";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { HeartIcon, MessageCircleIcon, UserPlusIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link"; // Import Link component
-
-import { useEffect, useState } from "react";
-
-type Notifications = Awaited<ReturnType<typeof getNotifications>>;
-type Notification = Notifications[number];
+import { useNotifications } from "../hooks/useNotificationRealtime";
 
 const getNotificationIcon = (type: string) => {
   switch (type) {
@@ -33,39 +25,12 @@ const getNotificationIcon = (type: string) => {
 };
 
 function NotificationsPage() {
-  const { toast } = useToast();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getNotifications();
-        setNotifications(data);
-
-        const unreadIds = data
-          .filter((n: any) => !n.read)
-          .map((n: any) => n.id);
-        if (unreadIds.length > 0) await markNotificationsAsRead(unreadIds);
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Failed to fetch notifications",
-          description: error instanceof Error ? error.message : String(error),
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchNotifications();
-  }, []);
+  const { notifications, isLoading } = useNotifications();
 
   if (isLoading) return <NotificationsSkeleton />;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-lg mx-auto w-full">
       <Card>
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
@@ -76,7 +41,7 @@ function NotificationsPage() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
+          <ScrollArea className="h-[calc(100vh-15rem)]">
             {notifications.length === 0 ? (
               <div className="p-4 text-center text-muted-foreground">
                 No notifications yet
@@ -91,16 +56,17 @@ function NotificationsPage() {
                 >
                   <Avatar className="mt-1">
                     <AvatarImage
-                      src={notification.creator.image ?? "/avatar.png"}
+                      src={notification.creator?.image ?? "/avatar.png"}
+                      className="object-cover"
                     />
                   </Avatar>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-2">
-                      {getNotificationIcon(notification.type)}
+                      {getNotificationIcon(notification?.type)}
                       <span>
                         <span className="font-medium">
-                          {notification.creator.name ??
-                            notification.creator.username}
+                          {notification.creator?.name ??
+                            notification.creator?.username}
                         </span>{" "}
                         {notification.type === "FOLLOW"
                           ? "started following you"
@@ -115,12 +81,12 @@ function NotificationsPage() {
                         notification.type === "COMMENT") && (
                         <div className="pl-6 space-y-2">
                           <div className="text-sm text-muted-foreground rounded-md p-2 bg-muted/30 mt-2">
-                            <p>{notification.post.content}</p>
-                            {notification.post.image && (
+                            <p>{notification.post?.content}</p>
+                            {notification.post?.image && (
                               <Image
-                                src={notification.post.image}
+                                src={notification.post?.image}
                                 alt="Post content"
-                                className="mt-2 rounded-md w-full max-w-[200px] h-auto object-cover"
+                                className="mt-2 rounded-md w-full max-w-[200px] h-[250px] object-cover"
                                 width={500}
                                 height={500}
                               />
@@ -130,7 +96,7 @@ function NotificationsPage() {
                           {notification.type === "COMMENT" &&
                             notification.comment && (
                               <div className="text-sm p-2 bg-accent/50 rounded-md">
-                                {notification.comment.content}
+                                {notification.comment?.content}
                               </div>
                             )}
                         </div>
@@ -145,7 +111,7 @@ function NotificationsPage() {
                     {/* Add View Profile Button for FOLLOW notification */}
                     {notification.type === "FOLLOW" && (
                       <Link
-                        href={`/profile/${notification.creator.username}`}
+                        href={`/profile/${notification.creator?.username}`}
                         className="mt-2 inline-block text-sm text-blue-500 hover:underline"
                       >
                         View Profile
@@ -161,4 +127,5 @@ function NotificationsPage() {
     </div>
   );
 }
+
 export default NotificationsPage;

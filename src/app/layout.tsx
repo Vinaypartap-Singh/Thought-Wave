@@ -45,7 +45,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-screen">
+            <div className="min-h-screen mb-[4vh]">
               <Header />
 
               <main className="py-8">

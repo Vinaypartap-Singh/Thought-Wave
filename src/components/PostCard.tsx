@@ -122,7 +122,7 @@ function PostCard({
         <div className="space-y-4">
           <div className="flex space-x-3 sm:space-x-4">
             <Link href={`/profile/${post.author.username}`}>
-              <Avatar className="size-8 sm:w-10 sm:h-10 object-cover">
+              <Avatar className="size-12 sm:w-10 sm:h-10 object-cover">
                 <AvatarImage
                   src={authorImage ?? "/avatar.png"}
                   className="object-cover"
@@ -246,6 +246,7 @@ function PostCard({
                     <Avatar className="size-8 flex-shrink-0">
                       <AvatarImage
                         src={comment.author.image ?? "/avatar.png"}
+                        className="object-cover"
                       />
                     </Avatar>
                     <div className="flex-1 min-w-0">
@@ -320,6 +321,7 @@ function PostCard({
                     <Avatar className="size-8 flex-shrink-0">
                       <AvatarImage
                         src={comment.author.image ?? "/avatar.png"}
+                        className="object-cover"
                       />
                     </Avatar>
                     <div className="flex-1 min-w-0">
@@ -343,8 +345,11 @@ function PostCard({
 
               {user ? (
                 <div className="flex space-x-3">
-                  <Avatar className="size-8 flex-shrink-0">
-                    <AvatarImage src={user?.imageUrl || "/avatar.png"} />
+                  <Avatar className="size-12 flex-shrink-0">
+                    <AvatarImage
+                      src={user?.imageUrl || "/avatar.png"}
+                      className="object-cover"
+                    />
                   </Avatar>
                   <div className="flex-1">
                     <Textarea

@@ -1,14 +1,16 @@
-import { SignInButton, UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+"use client";
+
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 import { getNotifications } from "@/actions/notification.action";
+import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 
-export default async function DesktopNavbar() {
-  const user = await currentUser();
-  const notifications = await getNotifications();
+export default function DesktopNavbar() {
+  const { user } = useUser();
+  const { notifications } = useNotifications();
 
   const unreadNotifications = notifications.filter(
     (notification) => !notification.read

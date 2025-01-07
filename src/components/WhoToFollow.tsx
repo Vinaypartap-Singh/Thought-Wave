@@ -24,7 +24,10 @@ async function WhoToFollow() {
               <div className="flex items-center gap-1">
                 <Link href={`/user/${user.username}`}>
                   <Avatar>
-                    <AvatarImage src={user.image ?? "/avatar.png"} />
+                    <AvatarImage
+                      src={user.image ?? "/avatar.png"}
+                      className="object-cover"
+                    />
                   </Avatar>
                 </Link>
                 <div className="text-xs">

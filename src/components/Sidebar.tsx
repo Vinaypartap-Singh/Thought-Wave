@@ -28,7 +28,10 @@ async function Sidebar() {
               className="flex flex-col justify-center"
             >
               <Avatar className="w-20 h-20 border-2 ">
-                <AvatarImage src={authUser.imageUrl || "/avatar.png"} />
+                <AvatarImage
+                  src={authUser.imageUrl || "/avatar.png"}
+                  className="object-cover"
+                />
               </Avatar>
 
               <div className="mt-4 space-y-1">
