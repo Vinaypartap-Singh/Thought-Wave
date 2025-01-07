@@ -47,9 +47,9 @@ function NotificationsPage() {
                 No notifications yet
               </div>
             ) : (
-              notifications.map((notification) => (
+              notifications.map((notification, index) => (
                 <div
-                  key={notification.id}
+                  key={index}
                   className={`flex items-start gap-4 p-4 border-b hover:bg-muted/25 transition-colors relative ${
                     !notification.read ? "bg-muted/50" : ""
                   }`}

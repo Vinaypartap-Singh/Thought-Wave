@@ -1,12 +1,11 @@
 "use client";
 
+import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
-import { getNotifications } from "@/actions/notification.action";
-import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 
 export default function DesktopNavbar() {
   const { user } = useUser();
@@ -15,6 +14,8 @@ export default function DesktopNavbar() {
   const unreadNotifications = notifications.filter(
     (notification) => !notification.read
   );
+
+  console.log(unreadNotifications.length);
 
   return (
     <header className="hidden md:flex items-center space-x-4">

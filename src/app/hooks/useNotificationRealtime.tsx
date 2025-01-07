@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { useToast } from "@/hooks/use-toast";
 import {
   getNotifications,
   markNotificationsAsRead,
 } from "@/actions/notification.action";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabaseClient";
+import { useEffect, useState } from "react";
 
 export const useNotifications = () => {
   type Notifications = Awaited<ReturnType<typeof getNotifications>>;
@@ -45,7 +45,6 @@ export const useNotifications = () => {
         { event: "*", schema: "public", table: "Notification" },
         (payload) => {
           const newNotification = payload.new as Notification;
-
           // Append new notification to state
           try {
             setNotifications((prevNotifications) => [
@@ -66,7 +65,7 @@ export const useNotifications = () => {
 
     // Cleanup on unmount
     return () => {
-      supabase.removeChannel(notificationChannel);
+      notificationChannel.unsubscribe();
     };
   }, [toast]);
 
