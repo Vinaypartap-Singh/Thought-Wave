@@ -62,6 +62,8 @@ function CreatePost() {
     }
   };
 
+  const unSafeImage = user?.unsafeMetadata?.imageUrl;
+
   return (
     <Card className="mb-6">
       <CardContent className="pt-6">
@@ -69,7 +71,11 @@ function CreatePost() {
           <div className="flex space-x-4">
             <Avatar className="size-12">
               <AvatarImage
-                src={user?.imageUrl || "/avatar.png"}
+                src={
+                  (unSafeImage as string) ||
+                  (user?.imageUrl as string) ||
+                  "/avatar.png"
+                }
                 className="object-cover"
               />
             </Avatar>

@@ -31,6 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { uploadImageToSupabase } from "@/lib/uploadImageToSupabase";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
 import {
@@ -38,8 +39,10 @@ import {
   EditIcon,
   FileTextIcon,
   HeartIcon,
+  ImageIcon,
   LinkIcon,
   MapPinIcon,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -65,7 +68,6 @@ function ProfilePageClient({
   likedPosts,
   posts,
   user,
-  currentProfileImage,
 }: ProfilePageClientProps) {
   const { toast } = useToast();
   const { user: currentUser } = useUser();
@@ -73,6 +75,12 @@ function ProfilePageClient({
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isUpdatingFollow, setIsUpdatingFollow] = useState(false);
   const [showProfileImageDialog, setShowProfileImageDialog] = useState(false);
+
+  // Use State for Edit Profile Form
+
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
 
   const [editForm, setEditForm] = useState({
     name: user.name || "",
@@ -98,11 +106,36 @@ function ProfilePageClient({
     }
   };
 
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    try {
+      const url = await uploadImageToSupabase(file);
+      if (url) {
+        setImageUrl(url);
+        toast({ title: "Image uploaded successfully" });
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      toast({ title: "Failed to upload image", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleProfileImageUpdate = async () => {
     try {
-      const result = await updateProfileImage(
-        currentProfileImage ?? user.image!
-      );
+      const result = await updateProfileImage(imageUrl ?? user.image!);
+      await currentUser?.update({
+        unsafeMetadata: {
+          imageUrl: imageUrl ?? user.image!,
+        },
+      });
       if (result.success) {
         setShowProfileImageDialog(false);
         toast({
@@ -412,13 +445,56 @@ function ProfilePageClient({
                   with the database.
                 </Label>
               </div>
+
+              {imageUrl && (
+                <div className="relative size-40">
+                  <img
+                    src={imageUrl}
+                    alt="Uploaded"
+                    className="rounded-md size-40 object-cover"
+                  />
+                  <button
+                    onClick={() => setImageUrl("")}
+                    className="absolute top-0 right-0 p-1 bg-red-500 rounded-full shadow-sm"
+                    type="button"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+              )}
+
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-primary"
+                  disabled={uploading || isPosting}
+                >
+                  <label className="cursor-pointer flex items-center">
+                    <ImageIcon className="size-4 mr-2" />
+                    <span>Photo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </Button>
+              </div>
             </div>
 
             <div className="flex justify-end gap-3">
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button onClick={handleProfileImageUpdate}>Update Image</Button>
+              <Button
+                onClick={handleProfileImageUpdate}
+                disabled={uploading || isPosting || !imageUrl}
+              >
+                Update Image
+              </Button>
             </div>
           </DialogContent>
         </Dialog>

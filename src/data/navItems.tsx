@@ -1,5 +1,7 @@
 // Dummy Data here
 
+import { getPublicUserInfo } from "@/actions/profile.action";
+import { currentUser } from "@clerk/nextjs/server";
 import { Bell, House, User } from "lucide-react";
 
 interface NavItems {
@@ -25,3 +27,10 @@ export const NavItems: NavItems[] = [
     icon: <User className="size-5" />,
   },
 ];
+
+export const user = await currentUser();
+export const currentLoggedIn = async (username: string) => {
+  await getPublicUserInfo(username);
+};
+
+export const isSidebarNavigation = false;
