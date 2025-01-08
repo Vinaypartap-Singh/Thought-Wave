@@ -21,7 +21,7 @@ async function Sidebar() {
   if (!user) return null;
 
   return (
-    <div className="sticky top-3">
+    <div className={`sticky ${isSidebarNavigation ? "top-3" : "top-20"}`}>
       <Card>
         <CardContent className="pt-6">
           {isSidebarNavigation ? (

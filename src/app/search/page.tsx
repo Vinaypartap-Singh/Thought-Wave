@@ -43,7 +43,7 @@ export default function Search() {
 
   if (!user)
     return (
-      <div className="max-w-lg mx-auto w-full">
+      <div className="max-w-lg w-full">
         <p>Please Login Your Account to Access This Page</p>
         <Card className="md:hidden">
           <CardHeader>
@@ -71,7 +71,7 @@ export default function Search() {
     );
 
   return (
-    <div className="p-4 max-w-lg mx-auto w-full">
+    <div className="p-4 max-w-lg w-full">
       <h1 className="text-3xl font-semibold mb-4">Search</h1>
 
       {/* Search input */}

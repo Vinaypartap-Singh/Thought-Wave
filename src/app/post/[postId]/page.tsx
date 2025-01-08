@@ -13,7 +13,7 @@ export default async function Post({
 
   return (
     <div>
-      <div className="space-y-6 max-w-lg mx-auto w-full">
+      <div className="space-y-6 max-w-lg w-full">
         <PostCard
           key={post.id}
           post={post}

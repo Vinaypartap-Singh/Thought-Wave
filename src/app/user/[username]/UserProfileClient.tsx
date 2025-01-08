@@ -106,7 +106,7 @@ function UserProfile({
   const formattedDate = format(new Date(user.createdAt), "MMMM yyyy");
 
   return (
-    <div className="max-w-lg mx-auto w-full">
+    <div className="max-w-lg w-full">
       <div className="grid grid-cols-1 gap-6">
         <div className="w-full max-w-lg">
           <Card className="bg-card">

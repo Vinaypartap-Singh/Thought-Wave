@@ -178,7 +178,7 @@ function ProfilePageClient({
   const formattedDate = format(new Date(user.createdAt), "MMMM yyyy");
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="max-w-lg">
       <div className="grid grid-cols-1 gap-6">
         <div className="w-full max-w-lg">
           <Card className="bg-card">

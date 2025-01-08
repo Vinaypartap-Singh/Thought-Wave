@@ -10,7 +10,7 @@ export default async function GetFollowerPage({
   const followers = await getFollowersByUsername(username);
   return (
     <div>
-      <div className="space-y-6 max-w-lg w-full mx-auto">
+      <div className="space-y-6 max-w-lg w-full">
         {followers && <FollowersCard users={followers} />}
       </div>
     </div>
