@@ -4,7 +4,6 @@ import { getDbUserID } from "@/actions/user.action";
 import CreatePost from "@/components/CreatePost";
 import PostCard from "@/components/PostCard";
 import WhoToFollow from "@/components/WhoToFollow";
-import { currentLoggedIn } from "@/data/navItems";
 import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
