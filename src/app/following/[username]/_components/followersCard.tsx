@@ -1,5 +1,5 @@
 import { getFollowingByUsername } from "@/actions/user.action";
-import FollowButton from "@/components/FollowButton";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import Link from "next/link";
 type User = Awaited<ReturnType<typeof getFollowingByUsername>>;
 
 export default function followingsCard({ users }: { users: any }) {
-  console.log(users);
   return (
     <Card className="p-4 shadow-md rounded-lg">
       <CardHeader>
@@ -53,7 +52,12 @@ export default function followingsCard({ users }: { users: any }) {
                       </p>
                     </div>
                   </div>
-                  <FollowButton userId={user.id} />
+                  <Button variant={"outline"} asChild>
+                    <Link href={`/profile/${user.following.username}`}>
+                      View Profile
+                    </Link>
+                  </Button>
+                  {/* <FollowButton userId={user.id} /> */}
                 </div>
               ))}
             </div>

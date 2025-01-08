@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function SearchCard({ user }: { user: any }) {
-  console.log(user);
   return (
     <Link
       href={`/user/${user.username}`}

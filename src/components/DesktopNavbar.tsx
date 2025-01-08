@@ -15,8 +15,6 @@ export default function DesktopNavbar() {
     (notification) => !notification.read
   );
 
-  console.log(unreadNotifications.length);
-
   return (
     <header className="hidden md:flex items-center space-x-4">
       <ThemeToggle />

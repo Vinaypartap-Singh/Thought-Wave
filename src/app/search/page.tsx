@@ -1,13 +1,12 @@
 "use client";
 
 import { searchUsers } from "@/actions/user.action";
+import Loader from "@/components/Loader";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import SearchCard from "./_components/SearchCard";
-import Loader from "@/components/Loader";
-import { SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
-import { UnAuthenticatedSidebar } from "@/components/Sidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 type Posts = Awaited<ReturnType<typeof searchUsers>>;
 
@@ -29,7 +28,6 @@ export default function Search() {
           ? await searchUsers("")
           : await searchUsers(search);
       setResults(data); // Update results state
-      console.log(data); // Optionally log the results
     } catch (error) {
       setError("Error fetching users"); // Set error state if there's an issue
       console.error(error);

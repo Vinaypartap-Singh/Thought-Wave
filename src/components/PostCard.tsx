@@ -5,38 +5,15 @@ import {
   deletePost,
   getPosts,
   toggleLike,
-  updatePost,
 } from "@/actions/post.action";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import {
   HeartIcon,
-  Loader2Icon,
   LogInIcon,
   MessageCircleIcon,
-  NotebookPen,
   SendIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -47,8 +24,6 @@ import { ShareButton } from "./ShareButton";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Card, CardContent } from "./ui/card";
 import { Textarea } from "./ui/textarea";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import UpdatePost from "./UpdatePost";
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
@@ -75,7 +50,6 @@ function PostCard({
   );
   const [optimisticLikes, setOptmisticLikes] = useState(post._count.likes);
   const [showComments, setShowComments] = useState(false);
-  console.log(showComments);
 
   const handleLike = async () => {
     if (isLiking) return;

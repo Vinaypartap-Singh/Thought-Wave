@@ -31,7 +31,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { SignInButton, useAuth, useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { format } from "date-fns";
 import {
   CalendarIcon,
@@ -99,7 +99,6 @@ function ProfilePageClient({
   };
 
   const handleProfileImageUpdate = async () => {
-    console.log(user);
     try {
       const result = await updateProfileImage(
         currentProfileImage ?? user.image!

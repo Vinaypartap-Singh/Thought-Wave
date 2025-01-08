@@ -5,9 +5,9 @@ import {
   getUserPosts,
   isFollowing,
 } from "@/actions/profile.action";
+import { currentUser } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import ProfilePageClient from "./ProfilePageClient";
-import { currentUser } from "@clerk/nextjs/server";
 
 // Metadata generation
 export async function generateMetadata({ params }: any) {

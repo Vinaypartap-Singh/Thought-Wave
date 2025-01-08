@@ -1,23 +1,23 @@
 "use client";
 
+import { updatePost } from "@/actions/post.action";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
-import { useState } from "react";
-import { ImageIcon, Loader2Icon, NotebookPen, X } from "lucide-react";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
-import { updatePost } from "@/actions/post.action";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImageToSupabase } from "@/lib/uploadImageToSupabase";
+import { ImageIcon, Loader2Icon, NotebookPen, X } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
 
 export default function UpdatePost({
   postId,
