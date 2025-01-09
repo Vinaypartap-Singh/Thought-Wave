@@ -79,6 +79,7 @@ export default async function RootLayout({
               </main>
               <BottomNavigation />
             </div>
+
             {/* <Toaster /> */}
           </ThemeProvider>
         </body>

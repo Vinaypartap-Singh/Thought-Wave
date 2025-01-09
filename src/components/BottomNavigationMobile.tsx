@@ -1,10 +1,9 @@
 "use client"; // Ensures this component is client-side
-
-import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 import { useUser } from "@clerk/nextjs"; // Use useUser for client-side
 import { Bell, Home, Image, Search, User } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 
 export default function BottomNavigation() {
   const { user } = useUser(); // Use Clerk's client-side hook to fetch user data
