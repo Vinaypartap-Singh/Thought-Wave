@@ -190,7 +190,11 @@ export async function getUserLikedPosts(userId: string) {
                         userId,
                     },
                 },
+                authorId: {
+                    not: userId
+                }
             },
+
             include: {
                 author: {
                     select: {

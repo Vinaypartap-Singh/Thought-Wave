@@ -1,5 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { SignInButton, SignOutButton, useAuth, useUser } from "@clerk/nextjs";
 import {
   BellIcon,
   FileText,
@@ -10,24 +19,9 @@ import {
   SunIcon,
   UserIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useState } from "react";
-import {
-  useAuth,
-  SignInButton,
-  SignOutButton,
-  useUser,
-  UserButton,
-} from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useState } from "react";
 
 function MobileNavbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -130,8 +124,6 @@ function MobileNavbar() {
           </nav>
         </SheetContent>
       </Sheet>
-
-      {user && <UserButton />}
     </div>
   );
 }

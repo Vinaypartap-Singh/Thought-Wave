@@ -303,7 +303,7 @@ function ProfilePageClient({
                data-[state=active]:bg-transparent px-6 font-semibold"
             >
               <FileTextIcon className="size-4" />
-              Posts
+              Your Posts
             </TabsTrigger>
             <TabsTrigger
               value="likes"
@@ -311,7 +311,7 @@ function ProfilePageClient({
                data-[state=active]:bg-transparent px-6 font-semibold"
             >
               <HeartIcon className="size-4" />
-              Likes
+              Liked Posts
             </TabsTrigger>
           </TabsList>
 

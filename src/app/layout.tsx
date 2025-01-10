@@ -1,3 +1,4 @@
+import BottomNavigation from "@/components/BottomNavigationMobile";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -7,7 +8,6 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
-import BottomNavigation from "@/components/BottomNavigationMobile";
 
 const font = Roboto({
   weight: ["400", "500", "700", "900"],

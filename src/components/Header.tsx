@@ -1,9 +1,9 @@
+import { syncUser } from "@/actions/user.action";
+import { isSidebarNavigation } from "@/data/navItems";
+import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 import DesktopNavbar from "./DesktopNavbar";
 import MobileNavbar from "./MobileNavbar";
-import { currentUser } from "@clerk/nextjs/server";
-import { syncUser } from "@/actions/user.action";
-import Link from "next/link";
-import { isSidebarNavigation } from "@/data/navItems";
 
 async function Navbar() {
   const user = await currentUser();

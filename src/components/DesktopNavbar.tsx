@@ -1,11 +1,12 @@
 "use client";
 
-import { SignInButton, useUser, useClerk } from "@clerk/nextjs";
+import { useNotifications } from "@/app/hooks/useNotificationRealtime";
+import { SignInButton, useClerk, useUser } from "@clerk/nextjs";
 import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
-import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { useState } from "react";
 
 export default function DesktopNavbar() {
   const { user } = useUser();

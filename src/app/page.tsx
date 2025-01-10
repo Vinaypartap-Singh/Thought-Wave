@@ -1,5 +1,4 @@
 import { getPosts } from "@/actions/post.action";
-import { getPublicUserInfo } from "@/actions/profile.action";
 import { getDbUserID } from "@/actions/user.action";
 import CreatePost from "@/components/CreatePost";
 import PostCard from "@/components/PostCard";
