@@ -280,7 +280,10 @@ function PostCard({
               {user ? (
                 <div className="flex space-x-3">
                   <Avatar className="size-8 flex-shrink-0">
-                    <AvatarImage src={user?.imageUrl || "/avatar.png"} />
+                    <AvatarImage
+                      src={authorImage || "/avatar.png"}
+                      className="object-cover"
+                    />
                   </Avatar>
                   <div className="flex-1">
                     <Textarea
@@ -356,7 +359,7 @@ function PostCard({
                 <div className="flex space-x-3">
                   <Avatar className="size-12 flex-shrink-0">
                     <AvatarImage
-                      src={user?.imageUrl || "/avatar.png"}
+                      src={authorImage || "/avatar.png"}
                       className="object-cover"
                     />
                   </Avatar>

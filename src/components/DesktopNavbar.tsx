@@ -1,14 +1,27 @@
 "use client";
-import { SignInButton, useUser } from "@clerk/nextjs";
+
+import { SignInButton, useUser, useClerk } from "@clerk/nextjs";
 import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 import { useNotifications } from "@/app/hooks/useNotificationRealtime";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { useState } from "react";
 
 export default function DesktopNavbar() {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const { notifications } = useNotifications();
+  const [position, setPosition] = useState("bottom");
 
   const unreadNotifications = notifications.filter(
     (notification) => !notification.read
@@ -70,17 +83,50 @@ export default function DesktopNavbar() {
             </Link>
           </Button>
 
-          <Button variant="ghost" className="flex items-center gap-2" asChild>
-            <Link
-              href={`/profile/${
-                user.username ??
-                user.emailAddresses[0].emailAddress.split("@")[0]
-              }`}
-            >
-              <User className="w-4 h-4" />
-              <span className="hidden lg:inline">Profile</span>
-            </Link>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <User className="w-4 h-4" />
+                Profile
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Account Info</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center justify-start  gap-2"
+                    asChild
+                  >
+                    <Link
+                      href={`/profile/${
+                        user.username ??
+                        user.emailAddresses[0].emailAddress.split("@")[0]
+                      }`}
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="hidden lg:inline">Profile</span>
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  asChild
+                  onClick={() => signOut()}
+                  className="cursor-pointer"
+                >
+                  <Button
+                    variant="ghost"
+                    className="w-full flex justify-start items-center gap-2"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="hidden lg:inline">Sign Out</span>
+                  </Button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </>
       ) : (
         <SignInButton mode="modal">
