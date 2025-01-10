@@ -32,7 +32,7 @@ async function WhoToFollow() {
                 </Link>
                 <div className="text-xs">
                   <Link
-                    href={`/profile/${user.username}`}
+                    href={`/user/${user.username}`}
                     className="font-medium cursor-pointer"
                   >
                     {user.name}

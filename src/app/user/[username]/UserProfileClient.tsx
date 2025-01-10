@@ -127,23 +127,23 @@ function UserProfile({
                 {/* PROFILE STATS */}
                 <div className="w-full mt-6">
                   <div className="flex justify-between mb-4">
-                    <div>
+                    <Link href={`/following/${user.username}`}>
                       <div className="font-semibold text-center">
                         {user._count.following.toLocaleString()}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Following
                       </div>
-                    </div>
+                    </Link>
                     <Separator orientation="vertical" />
-                    <div>
+                    <Link href={`/followers/${user.username}`}>
                       <div className="font-semibold text-center">
                         {user._count.followers.toLocaleString()}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Followers
                       </div>
-                    </div>
+                    </Link>
                     <Separator orientation="vertical" />
                     <div>
                       <div className="font-semibold text-center">

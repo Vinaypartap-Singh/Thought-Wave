@@ -10,7 +10,7 @@ export default function followingsCard({ users }: { users: any }) {
   return (
     <Card className="p-4 shadow-md rounded-lg">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Your followings</CardTitle>
+        <CardTitle className="text-lg font-bold">Followings</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">

@@ -10,7 +10,7 @@ export default async function FollowersCard({ users }: { users: any }) {
   return (
     <Card className="p-4 shadow-md rounded-lg">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">Your Followers</CardTitle>
+        <CardTitle className="text-lg font-bold">Followers</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">

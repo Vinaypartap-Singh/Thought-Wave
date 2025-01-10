@@ -122,7 +122,7 @@ function PostCard({
       <CardContent className="p-4 sm:p-6">
         <div className="space-y-4">
           <div className="flex space-x-3 sm:space-x-4">
-            <Link href={`/profile/${post.author.username}`}>
+            <Link href={`/user/${post.author.username}`}>
               <Avatar className="size-12 sm:w-10 sm:h-10 object-cover">
                 <AvatarImage
                   src={authorImage ?? "/avatar.png"}
@@ -136,7 +136,7 @@ function PostCard({
               <div className="flex items-start justify-between">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
                   <Link
-                    href={`/profile/${post.author.username}`}
+                    href={`/user/${post.author.username}`}
                     className="font-semibold truncate"
                   >
                     {post.author.name}
