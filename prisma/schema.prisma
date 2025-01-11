@@ -1,4 +1,3 @@
-// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,18 +19,24 @@ model User {
   location    String?
   website     String?
   profileType ProfileType @default(PUBLIC)
-  createdAt   DateTime    @default(now()) // member since 2020
+  createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   // Relations
-  posts                Post[] // One-to-many
-  comments             Comment[] // One-to-many
-  likes                Like[] // One-to-many
-  shares               Share[] // One-to-many (new relation for shares)
-  followers            Follows[]      @relation("following") // users who follow this user
-  following            Follows[]      @relation("follower") // users this user follows
-  notifications        Notification[] @relation("userNotifications") // notifications received by a user
-  notificationsCreated Notification[] @relation("notificationCreator") // notifications triggered by a user
+  posts                Post[]
+  comments             Comment[]
+  likes                Like[]
+  shares               Share[]
+  followers            Follows[]      @relation("following")
+  following            Follows[]      @relation("follower")
+  notifications        Notification[] @relation("userNotifications")
+  notificationsCreated Notification[] @relation("notificationCreator")
+
+  // Chat Relations
+  sentChatRequests     ChatRequest[] @relation("senderRequest")
+  receivedChatRequests ChatRequest[] @relation("receiverRequest")
+  sentMessages         Message[]     @relation("senderRelation")
+  receivedMessages     Message[]     @relation("receiverRelation")
 }
 
 model Post {
@@ -44,11 +49,11 @@ model Post {
   updatedAt          DateTime @updatedAt
 
   // Relations
-  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade) // cascade delete means delete all posts if author is deleted
+  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments      Comment[]
   likes         Like[]
   notifications Notification[]
-  shares        Share[] // One-to-many (new relation for shares)
+  shares        Share[]
 }
 
 model Comment {
@@ -63,7 +68,7 @@ model Comment {
   post          Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
   notifications Notification[]
 
-  @@index([authorId, postId]) // composite index for faster queries
+  @@index([authorId, postId])
 }
 
 model Like {
@@ -76,8 +81,8 @@ model Like {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, postId]) // prevents same user liking post twice
-  @@index([userId, postId]) // composite index for faster queries
+  @@unique([userId, postId])
+  @@index([userId, postId])
 }
 
 model Follows {
@@ -89,21 +94,21 @@ model Follows {
   follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
   following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
 
-  @@id([followerId, followingId]) // composite primary key prevents duplicate follows
-  @@index([followerId, followingId]) // composite index for faster queries
+  @@id([followerId, followingId])
+  @@index([followerId, followingId])
 }
 
 model Share {
-  id        String   @id @default(cuid()) // Unique ID for the share record
-  userId    String // ID of the user who shared the post
-  postId    String // ID of the post being shared
-  createdAt DateTime @default(now()) // Date and time when the post was shared
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@index([userId, postId]) // composite index for faster queries
+  @@index([userId, postId])
 }
 
 model Notification {
@@ -125,6 +130,34 @@ model Notification {
   @@index([userId, createdAt])
 }
 
+model ChatRequest {
+  id         String     @id @default(cuid())
+  senderId   String
+  receiverId String
+  status     ChatStatus @default(NOT_REQUESTED)
+  createdAt  DateTime   @default(now())
+
+  // Relations
+  sender   User @relation("senderRequest", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("receiverRequest", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
+
+  // Relations
+  sender   User @relation("senderRelation", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("receiverRelation", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, receiverId])
+}
+
 enum NotificationType {
   LIKE
   COMMENT
@@ -134,4 +167,11 @@ enum NotificationType {
 enum ProfileType {
   PUBLIC
   PRIVATE
+}
+
+enum ChatStatus {
+  NOT_REQUESTED
+  PENDING
+  ACCEPTED
+  REJECTED
 }
