@@ -236,7 +236,7 @@ function UserProfile({
                 ))
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  No posts yet or the account maybe private by user
+                  No posts by user
                 </div>
               )}
             </div>

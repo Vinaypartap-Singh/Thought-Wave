@@ -383,3 +383,74 @@ export async function getChatRequestStatus(receiverId: string) {
         return { success: false, error: "Failed to get request status" };
     }
 }
+
+
+
+export async function getChatRequests() {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        // Fetch all chat requests sent to the user
+
+        const chatRequests = await prisma.chatRequest.findMany({
+            where: {
+                receiverId: userId,
+                status: "PENDING"
+            },
+            include: {
+                sender: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        image: true,
+                    },
+                },
+            },
+        });
+
+        return { success: true, chatRequests };
+    } catch (error) {
+        console.error("Failed to get chat requests:", error);
+        return { success: false, error: "Failed to get chat requests" };
+    }
+}
+
+
+export async function RequestRejected() {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        // Fetch all chat requests sent to the user
+
+        const chatRequests = await prisma.chatRequest.findMany({
+            where: {
+                receiverId: userId,
+                status: "REJECTED"
+            },
+            include: {
+                sender: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        image: true,
+                    },
+                },
+            },
+        });
+
+        return { success: true, chatRequests };
+    } catch (error) {
+        console.error("Failed to get chat requests:", error);
+        return { success: false, error: "Failed to get chat requests" };
+    }
+}

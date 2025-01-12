@@ -7,11 +7,16 @@ export function NotificationsSkeleton() {
   const skeletonItems = Array.from({ length: 5 }, (_, i) => i);
 
   return (
-    <div className="space-y-4 max-w-lg w-full">
-      <Card>
+    <div className="max-w-lg">
+      <div className="grid grid-cols-3 w-full mb-1">
+        <Skeleton className="h-10 w-full rounded-none rounded-tl-md rounded-bl-md" />
+        <Skeleton className="h-10 w-full rounded-none" />
+        <Skeleton className="h-10 w-full rounded-none rounded-tr-md rounded-br-md" />
+      </div>
+      <Card className="w-full">
         <CardHeader className="border-b">
           <div className="flex items-center justify-between">
-            <CardTitle>Notifications</CardTitle>
+            <CardTitle>Loading</CardTitle>
             <Skeleton className="h-4 w-20" />
           </div>
         </CardHeader>
