@@ -6,7 +6,7 @@ import {
   updateProfile,
   updateProfileImage,
 } from "@/actions/profile.action";
-import { toggleFollow } from "@/actions/user.action";
+import { sendChatRequest, toggleFollow } from "@/actions/user.action";
 import PostCard from "@/components/PostCard";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import MessageRequestButton from "./_components/MessageRequestButton";
 
 type User = Awaited<ReturnType<typeof getPublicUserInfo>>;
 type Posts = Awaited<ReturnType<typeof getUserPosts>>;
@@ -75,6 +76,10 @@ function ProfilePageClient({
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isUpdatingFollow, setIsUpdatingFollow] = useState(false);
   const [showProfileImageDialog, setShowProfileImageDialog] = useState(false);
+
+  // Chat Requested
+
+  const [sendingChatRequest, setSendingChatRequest] = useState(false);
 
   // Use State for Edit Profile Form
 
@@ -171,6 +176,28 @@ function ProfilePageClient({
     }
   };
 
+  const handleMessageSentRequest = async (userId: string) => {
+    try {
+      setSendingChatRequest(true);
+
+      // Attempt to send the chat request and get the result
+      const response = await sendChatRequest(userId);
+
+      toast({
+        title: "Message request sent",
+        description: `Your message request has been sent to ${user.username}`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to send message request",
+        description: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      setSendingChatRequest(false);
+    }
+  };
+
   const isOwnProfile =
     currentUser?.username === user.username ||
     currentUser?.emailAddresses[0].emailAddress.split("@")[0] === user.username;
@@ -250,14 +277,27 @@ function ProfilePageClient({
                     </Button>
                   </div>
                 ) : (
-                  <Button
-                    className="w-full mt-4"
-                    onClick={handleFollow}
-                    disabled={isUpdatingFollow}
-                    variant={isFollowing ? "outline" : "default"}
-                  >
-                    {isFollowing ? "Unfollow" : "Follow"}
-                  </Button>
+                  <div className="flex flex-col md:flex-row  gap-4">
+                    <Button
+                      className="w-full mt-4 md:mt-0 md:w-1/2"
+                      onClick={handleFollow}
+                      disabled={isUpdatingFollow}
+                      variant={isFollowing ? "outline" : "default"}
+                    >
+                      {isFollowing ? "Unfollow" : "Follow"}
+                    </Button>
+                    <MessageRequestButton
+                      userId={user.id}
+                      handleMessageSentRequest={handleMessageSentRequest}
+                      sendingChatRequest={sendingChatRequest}
+                    />
+                    {/* <Button
+                      className="w-full md:w-1/2"
+                      onClick={() => handleMessageSentRequest(user.id)}
+                    >
+                      {sendingChatRequest ? "Sending..." : "Message"}
+                    </Button> */}
+                  </div>
                 )}
 
                 {/* LOCATION & WEBSITE */}

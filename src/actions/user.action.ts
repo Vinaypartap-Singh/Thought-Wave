@@ -301,3 +301,85 @@ export async function searchUsers(searchQuery: string = "") {
         return [];
     }
 }
+
+
+
+// Chat Request Actions
+
+export async function sendChatRequest(receiverId: string) {
+    try {
+        const userId = await getDbUserID();
+
+        // Validate sender and receiver IDs
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        if (!receiverId) {
+            return { success: false, error: "Receiver ID is required" };
+        }
+
+        // Check if the chat request already exists
+        const existingRequest = await prisma.chatRequest.findFirst({
+            where: {
+                senderId: userId,
+                receiverId: receiverId,
+            },
+        });
+
+        // If the request exists, return early
+        if (existingRequest) {
+            return { success: true, existingRequest };
+        }
+
+        // Create a new chat request if none exists
+        const createRequest = await prisma.chatRequest.create({
+            data: {
+                senderId: userId,
+                receiverId: receiverId,
+                status: "PENDING", // Explicitly set status to PENDING
+            },
+        });
+
+        // Return success response
+        return { success: true, createRequest };
+
+    } catch (error) {
+        console.error("Failed to send chat request:", error);
+        return { success: false, error: "Failed to send request" };
+    }
+}
+
+export async function getChatRequestStatus(receiverId: string) {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        if (!receiverId) {
+            return { success: false, error: "Receiver ID is required" };
+        }
+
+        // Check if the chat request exists
+        const request = await prisma.chatRequest.findFirst({
+            where: {
+                senderId: userId,
+                receiverId: receiverId,
+            },
+        });
+
+        // If no request exists, return "NOT_REQUESTED"
+        if (!request) {
+            return { success: true, status: "NOT_REQUESTED" };
+        }
+
+        // Return the status of the request
+        return { success: true, status: request.status };
+
+    } catch (error) {
+        console.error("Failed to get chat request status:", error);
+        return { success: false, error: "Failed to get request status" };
+    }
+}
