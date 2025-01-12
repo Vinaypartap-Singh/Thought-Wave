@@ -35,8 +35,11 @@ model User {
   // Chat Relations
   sentChatRequests     ChatRequest[] @relation("senderRequest")
   receivedChatRequests ChatRequest[] @relation("receiverRequest")
-  sentMessages         Message[]     @relation("senderRelation")
-  receivedMessages     Message[]     @relation("receiverRelation")
+
+  RoomMember RoomMember[]
+
+  // Reverse relation for messages sent by the user
+  sentMessages Message[] @relation("sentMessages")
 }
 
 model Post {
@@ -145,17 +148,42 @@ model ChatRequest {
 }
 
 model Message {
-  id         String   @id @default(cuid())
-  senderId   String
-  receiverId String
-  content    String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  roomId    String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
 
   // Relations
-  sender   User @relation("senderRelation", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver User @relation("receiverRelation", fields: [receiverId], references: [id], onDelete: Cascade)
+  room   Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender User @relation("sentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
-  @@index([senderId, receiverId])
+  @@index([roomId])
+}
+
+model Room {
+  id        String   @id
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users    RoomMember[]
+  messages Message[]
+
+  @@unique([id]) // Ensuring each room has a unique ID
+}
+
+model RoomMember {
+  roomId   String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  // Relations
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([roomId, userId]) // Composite key to avoid duplicates in the RoomMember table
 }
 
 enum NotificationType {
