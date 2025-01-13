@@ -5,9 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function RequestsComponent() {
   const { rejectedRequests, isLoading } = useRejectedChatRequests();
+
+  useEffect(() => {
+    if (!isLoading && rejectedRequests.length === 0) {
+      console.log("No more requests.");
+    }
+  }, [rejectedRequests, isLoading]);
 
   return (
     <Card>
@@ -35,38 +42,27 @@ export default function RequestsComponent() {
                 <div className="flex items-center gap-2">
                   <Avatar>
                     <AvatarImage
-                      src={request.sender.image || "/default-avatar.png"}
+                      src={request?.sender?.image || "/default-avatar.png"}
                       className="object-cover"
                     />
                   </Avatar>
                   <div className="text-sm">
                     <Link
-                      href={`/user/${request.sender.username}`}
+                      href={`/user/${request?.sender?.username}`}
                       className="font-medium cursor-pointer"
                     >
-                      {request.sender.name || "Unknown User"}
+                      {request?.sender?.name || "Unknown User"}
                     </Link>
                     <p className="text-muted-foreground">
-                      @{request.sender.username}
+                      @{request?.sender?.username}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button
-                    variant={"ghost"}
-                    onClick={() =>
-                      console.log(`Accepted request ${request.id}`)
-                    }
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    variant={"ghost"}
-                    onClick={() =>
-                      console.log(`Rejected request ${request.id}`)
-                    }
-                  >
-                    Reject
+                  <Button variant={"outline"} asChild>
+                    <Link href={`/user/${request.sender.username}`}>
+                      View Profile
+                    </Link>
                   </Button>
                 </div>
               </div>

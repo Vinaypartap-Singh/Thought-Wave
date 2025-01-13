@@ -1,10 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-async function createRoom(senderId: string, receiverId: string) {
+export async function createRoom(senderId: string, receiverId: string) {
     try {
         // Generate roomId based on senderId and receiverId
-        const roomId = [senderId, receiverId].sort().join('-'); // Sorting ensures that senderId-receiverId and receiverId-senderId are the same
+        const roomId = [senderId, receiverId].sort().join('-'); // Sorting ensures consistency
 
         // Check if the room already exists
         const existingRoom = await prisma.room.findUnique({
@@ -21,7 +21,7 @@ async function createRoom(senderId: string, receiverId: string) {
         const room = await prisma.room.create({
             data: {
                 id: roomId, // The unique roomId
-                name: `${senderId} - ${receiverId}`, // You can customize the room name
+                name: `${senderId} - ${receiverId}`, // Custom room name
             },
         });
 
@@ -31,19 +31,17 @@ async function createRoom(senderId: string, receiverId: string) {
                 { userId: senderId, roomId: room.id },
                 { userId: receiverId, roomId: room.id },
             ],
+            skipDuplicates: true, // Ensure users aren't added twice if they're already members
         });
 
         return room;
     } catch (error) {
         console.error('Error creating room:', error);
-        throw error;
+        throw new Error('Error creating room');
     }
 }
 
-
-
-
-async function sendMessage(senderId: string, receiverId: string, content: string) {
+export async function sendMessage(senderId: string, receiverId: string, content: string) {
     try {
         // Create or fetch the room based on senderId and receiverId
         const room = await createRoom(senderId, receiverId);
@@ -65,7 +63,7 @@ async function sendMessage(senderId: string, receiverId: string, content: string
 }
 
 
-async function getMessagesForRoom(senderId: string, receiverId: string) {
+export async function getMessagesForRoom(senderId: string, receiverId: string) {
     try {
         // Fetch room by senderId and receiverId
         const roomId = [senderId, receiverId].sort().join('-');

@@ -1,3 +1,4 @@
+import { acceptChatRequest, rejectChatRequest } from "@/actions/user.action";
 import { useChatRequests } from "@/app/hooks/useRequestsRealtime";
 import Loader from "@/components/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -5,9 +6,58 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { useEffect, useState } from "react"; // Import useState for managing local state
 
 export default function RequestsComponent() {
   const { chatRequests, isLoading } = useChatRequests();
+  const [loadingRequestId, setLoadingRequestId] = useState<string | null>(null);
+  const [rejectingRequestId, setRejectingRequestId] = useState<string | null>(
+    null
+  );
+
+  // Function to handle accepting the request
+  const handleAcceptRequest = async (requestId: string) => {
+    try {
+      setLoadingRequestId(requestId); // Set loading state for the clicked request
+      const response = await acceptChatRequest(requestId);
+
+      if (response.success) {
+        // Optionally, you can handle success, like refetching or updating the state
+        alert("Request accepted successfully!");
+      } else {
+        alert(`Failed to accept request: ${response.error}`);
+      }
+    } catch (error) {
+      console.error("Error accepting request:", error);
+      alert("An error occurred while accepting the request.");
+    } finally {
+      setLoadingRequestId(null); // Reset loading state
+    }
+  };
+
+  // Function to handle rejecting the request
+  const handleRejectRequest = async (requestId: string) => {
+    try {
+      setRejectingRequestId(requestId);
+      const response = await rejectChatRequest(requestId);
+
+      if (response.success) {
+        alert("Request rejected successfully!");
+      } else {
+        alert(`Failed to reject request: ${response.error}`);
+      }
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+    } finally {
+      setRejectingRequestId(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoading && chatRequests.length === 0) {
+      console.log("No more requests.");
+    }
+  }, [chatRequests, isLoading]);
 
   return (
     <Card>
@@ -35,38 +85,40 @@ export default function RequestsComponent() {
                 <div className="flex items-center gap-2">
                   <Avatar>
                     <AvatarImage
-                      src={request.sender.image || "/default-avatar.png"}
+                      src={request?.sender?.image || "/default-avatar.png"}
                       className="object-cover"
                     />
                   </Avatar>
                   <div className="text-sm">
                     <Link
-                      href={`/user/${request.sender.username}`}
+                      href={`/user/${request?.sender?.username}`}
                       className="font-medium cursor-pointer"
                     >
-                      {request.sender.name || "Unknown User"}
+                      {request?.sender?.name || "Unknown User"}
                     </Link>
                     <p className="text-muted-foreground">
-                      @{request.sender.username}
+                      @{request?.sender?.username}
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
                     variant={"ghost"}
-                    onClick={() =>
-                      console.log(`Accepted request ${request.id}`)
-                    }
+                    onClick={() => handleAcceptRequest(request.id)} // Call the function here
+                    disabled={loadingRequestId === request.id} // Disable the button while processing
                   >
-                    Accept
+                    {loadingRequestId === request.id
+                      ? "Accepting..."
+                      : "Accept"}
                   </Button>
                   <Button
                     variant={"ghost"}
-                    onClick={() =>
-                      console.log(`Rejected request ${request.id}`)
-                    }
+                    onClick={() => handleRejectRequest(request.id)} // Reject button
+                    disabled={rejectingRequestId === request.id}
                   >
-                    Reject
+                    {rejectingRequestId === request.id
+                      ? "Rejecting..."
+                      : "Reject"}
                   </Button>
                 </div>
               </div>

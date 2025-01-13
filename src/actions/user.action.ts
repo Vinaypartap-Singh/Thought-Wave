@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { createRoom } from "./room.action";
 
 
 export async function syncUser() {
@@ -452,5 +453,88 @@ export async function RequestRejected() {
     } catch (error) {
         console.error("Failed to get chat requests:", error);
         return { success: false, error: "Failed to get chat requests" };
+    }
+}
+
+// Accept / Reject Message Request
+
+export async function acceptChatRequest(requestId: string) {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        // Fetch the chat request
+        const request = await prisma.chatRequest.findFirst({
+            where: {
+                id: requestId,
+                receiverId: userId,
+                status: "PENDING",
+            },
+        });
+
+        if (!request) {
+            return { success: false, error: "Request not found or already accepted/rejected" };
+        }
+
+        // Update the request status to ACCEPTED
+        await prisma.chatRequest.update({
+            where: {
+                id: requestId,
+            },
+            data: {
+                status: "ACCEPTED",
+            },
+        });
+
+        // Create the room for the users
+        const room = await createRoom(userId, request.senderId);
+
+        return { success: true, room };
+    } catch (error) {
+        console.error("Failed to accept chat request:", error);
+        return { success: false, error: "Failed to accept request" };
+    }
+}
+
+
+// Add this to your backend file (e.g., `chatService.ts`)
+export async function rejectChatRequest(requestId: string) {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        // Fetch the chat request
+        const request = await prisma.chatRequest.findFirst({
+            where: {
+                id: requestId,
+                receiverId: userId,
+                status: "PENDING",
+            },
+        });
+
+        if (!request) {
+            return { success: false, error: "Request not found" };
+        }
+
+        // Update the request status to REJECTED
+        await prisma.chatRequest.update({
+            where: {
+                id: requestId,
+            },
+            data: {
+                status: "REJECTED",
+            },
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to reject chat request:", error);
+        return { success: false, error: "Failed to reject request" };
     }
 }
