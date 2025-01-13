@@ -1,7 +1,8 @@
 "use server";
 
 
-import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import { getDbUserID } from "./user.action";
 
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
@@ -48,8 +49,19 @@ export async function createRoom(senderId: string, receiverId: string) {
 
 export async function sendMessage(roomId: string, content: string) {
     try {
+        // Get senderId from the database using getDbUserID
+        const senderId = await getDbUserID();
 
-        const { userId: senderId } = await auth();
+        if (!senderId) {
+            throw new Error("User is not authenticated");
+        }
+
+        if (!roomId || !content) {
+            throw new Error("Room ID or content is invalid");
+        }
+
+        // Log before sending to Prisma for debugging purposes
+        console.log("Creating message with payload:", { roomId, senderId, content });
 
         // Create the message
         const message = await prisma.message.create({
@@ -60,12 +72,23 @@ export async function sendMessage(roomId: string, content: string) {
             },
         });
 
+        // Revalidate the path after creating the message
+        revalidatePath("/");
+
         return message;
     } catch (error) {
-        console.error('Error sending message:', error);
-        throw error;
+        // Log error with more detail
+        if (error instanceof Error) {
+            console.error("Error in sendMessage:", error.message);
+            return { success: false, error: error.message };
+        } else {
+            console.error("Unknown error in sendMessage:", error);
+            return { success: false, error: "Unknown error occurred while sending message." };
+        }
     }
 }
+
+
 
 
 export async function getMessagesForRoom(roomId: string) {
@@ -79,7 +102,7 @@ export async function getMessagesForRoom(roomId: string) {
                 sender: true, // Optionally include sender details in the response
             },
             orderBy: {
-                createdAt: 'asc', // Sort messages by creation date
+                createdAt: 'desc', // Sort messages by creation date
             },
         });
 

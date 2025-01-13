@@ -2,7 +2,15 @@
 
 import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 import { SignInButton, useClerk, useUser } from "@clerk/nextjs";
-import { Bell, Home, Image, PenLine, Search, User } from "lucide-react";
+import {
+  Bell,
+  Home,
+  Image,
+  MessageSquareCode,
+  PenLine,
+  Search,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
@@ -42,6 +50,13 @@ export default function DesktopNavbar() {
         <Link href="/feed">
           <Image className="w-4 h-4" />
           <span className="hidden lg:inline">Feed</span>
+        </Link>
+      </Button>
+
+      <Button variant="ghost" className="flex items-center gap-2" asChild>
+        <Link href="/messages">
+          <MessageSquareCode className="w-4 h-4" />
+          <span className="hidden lg:inline">Messages</span>
         </Link>
       </Button>
 

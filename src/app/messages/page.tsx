@@ -19,13 +19,16 @@ export default function ChatPage() {
       name: string | null;
       image: string | null;
     };
-    roomId: string | null; // Add roomId to the Chat interface
+    roomId: string | null;
   }
 
   const [acceptedChats, setAcceptedChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null); // State to store roomId
+  const [selectedChat, setSelectedChat] = useState<{
+    roomId: string;
+    senderId: string;
+  } | null>(null); // State to store roomId and senderId
 
   useEffect(() => {
     async function fetchAcceptedChats() {
@@ -48,9 +51,9 @@ export default function ChatPage() {
     fetchAcceptedChats();
   }, []);
 
-  // Handle button click to set the roomId
-  const handleChatButtonClick = (roomId: string) => {
-    setSelectedRoomId(roomId);
+  // Handle button click to set the selected chat
+  const handleChatButtonClick = (roomId: string, senderId: string) => {
+    setSelectedChat({ roomId, senderId });
   };
 
   return (
@@ -77,11 +80,13 @@ export default function ChatPage() {
             acceptedChats.map((chat) => (
               <Button
                 key={chat.sender.id}
-                className="w-full rounded-none"
+                className="w-full rounded-none cursor-pointer"
                 style={{ padding: "32px" }}
                 asChild
                 variant={"outline"}
-                onClick={() => handleChatButtonClick(chat.roomId || "")} // Set roomId on click
+                onClick={() =>
+                  handleChatButtonClick(chat.roomId || "", chat.sender.id)
+                } // Pass both roomId and senderId
               >
                 <div className="flex items-center px-4 py-3 hover:bg-muted">
                   <div className="relative">
@@ -107,9 +112,12 @@ export default function ChatPage() {
 
       {/* Chat Area */}
       <div className="flex-1 p-4">
-        {selectedRoomId ? (
+        {selectedChat ? (
           <div className="w-full h-full">
-            <ChatArea roomId={selectedRoomId} />
+            <ChatArea
+              roomId={selectedChat.roomId}
+              senderId={selectedChat.senderId}
+            />
           </div>
         ) : (
           <div className="flex justify-center items-center h-full">
