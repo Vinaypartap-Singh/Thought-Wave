@@ -538,3 +538,70 @@ export async function rejectChatRequest(requestId: string) {
         return { success: false, error: "Failed to reject request" };
     }
 }
+
+
+// Get Accepted Chats
+
+export default async function getAcceptedChatRequests() {
+    try {
+        const userId = await getDbUserID();
+
+        if (!userId) {
+            return { success: false, error: "Error getting user ID" };
+        }
+
+        const acceptedChatRequests = await prisma.chatRequest.findMany({
+            where: {
+                receiverId: userId,
+                status: "ACCEPTED"
+            },
+            include: {
+                sender: {
+                    select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        username: true
+                    }
+                }
+            }
+        });
+
+        // Fetch the roomId for each accepted chat request
+        const acceptedChatRequestsWithRoom = await Promise.all(
+            acceptedChatRequests.map(async (request) => {
+                // Find the roomId for the sender and receiver from the RoomMember model
+                const roomMembers = await prisma.roomMember.findMany({
+                    where: {
+                        userId: {
+                            in: [request.senderId, userId] // Find rooms with either sender or receiver
+                        }
+                    },
+                    include: {
+                        room: {
+                            select: {
+                                id: true
+                            }
+                        }
+                    }
+                });
+
+                // Extract the roomId from the room members
+                const roomId = roomMembers.length > 0 ? roomMembers[0].room.id : null;
+
+                return {
+                    ...request,
+                    roomId: roomId
+                };
+            })
+        );
+
+        revalidatePath("/");
+
+        return { success: true, acceptedChatRequests: acceptedChatRequestsWithRoom };
+
+    } catch (error) {
+        console.error("Failed to fetch accepted chat requests:", error);
+        return { success: false, error: "Failed to fetch accepted chat requests" };
+    }
+}

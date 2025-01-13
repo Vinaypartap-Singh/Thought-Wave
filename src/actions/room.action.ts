@@ -1,3 +1,8 @@
+"use server";
+
+
+import { auth } from "@clerk/nextjs/server";
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -41,15 +46,15 @@ export async function createRoom(senderId: string, receiverId: string) {
     }
 }
 
-export async function sendMessage(senderId: string, receiverId: string, content: string) {
+export async function sendMessage(roomId: string, content: string) {
     try {
-        // Create or fetch the room based on senderId and receiverId
-        const room = await createRoom(senderId, receiverId);
+
+        const { userId: senderId } = await auth();
 
         // Create the message
         const message = await prisma.message.create({
             data: {
-                roomId: room.id,
+                roomId: roomId,
                 senderId,
                 content,
             },
@@ -63,10 +68,9 @@ export async function sendMessage(senderId: string, receiverId: string, content:
 }
 
 
-export async function getMessagesForRoom(senderId: string, receiverId: string) {
+export async function getMessagesForRoom(roomId: string) {
     try {
         // Fetch room by senderId and receiverId
-        const roomId = [senderId, receiverId].sort().join('-');
         const messages = await prisma.message.findMany({
             where: {
                 roomId,
