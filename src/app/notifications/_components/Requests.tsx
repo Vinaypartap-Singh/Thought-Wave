@@ -5,10 +5,12 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useEffect, useState } from "react"; // Import useState for managing local state
 
 export default function RequestsComponent() {
+  const { toast } = useToast();
   const { chatRequests, isLoading } = useChatRequests();
   const [loadingRequestId, setLoadingRequestId] = useState<string | null>(null);
   const [rejectingRequestId, setRejectingRequestId] = useState<string | null>(
@@ -23,13 +25,19 @@ export default function RequestsComponent() {
 
       if (response.success) {
         // Optionally, you can handle success, like refetching or updating the state
-        alert("Request accepted successfully!");
+        toast({
+          title: "Request accepted successfully!",
+        });
       } else {
-        alert(`Failed to accept request: ${response.error}`);
+        toast({
+          title: `Failed to accept request: ${response.error}`,
+        });
       }
     } catch (error) {
       console.error("Error accepting request:", error);
-      alert("An error occurred while accepting the request.");
+      toast({
+        title: "An error occurred while accepting the request.",
+      });
     } finally {
       setLoadingRequestId(null); // Reset loading state
     }
@@ -42,9 +50,11 @@ export default function RequestsComponent() {
       const response = await rejectChatRequest(requestId);
 
       if (response.success) {
-        alert("Request rejected successfully!");
+        toast({
+          title: "Request rejected successfully!",
+        });
       } else {
-        alert(`Failed to reject request: ${response.error}`);
+        toast({ title: `Failed to reject request: ${response.error}` });
       }
     } catch (error) {
       console.error("Error rejecting request:", error);
@@ -71,7 +81,7 @@ export default function RequestsComponent() {
       </CardHeader>
 
       <CardContent className="py-5">
-        <ScrollArea className="h-[calc(100vh-15rem)]">
+        <ScrollArea className="h-[calc(100vh-20rem)]">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
               <Loader />

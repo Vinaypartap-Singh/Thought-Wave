@@ -74,7 +74,7 @@ export default function DesktopNavbar() {
                     : "text-gray-500"
                 }`}
               />
-              <span className="hidden lg:inline">Notifications</span>
+              <span className="hidden lg:inline">Your Acivity</span>
               {unreadNotifications.length > 0 && (
                 <span className="absolute -right-1 -top-1 bg-red-500 text-white flex items-center justify-center rounded-full text-xs h-4 w-4">
                   {unreadNotifications.length}

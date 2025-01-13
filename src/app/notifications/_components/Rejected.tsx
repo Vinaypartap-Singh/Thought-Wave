@@ -28,7 +28,7 @@ export default function RequestsComponent() {
       </CardHeader>
 
       <CardContent className="py-5">
-        <ScrollArea className="h-[calc(100vh-15rem)]">
+        <ScrollArea className="h-[calc(100vh-20rem)]">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
               <Loader />

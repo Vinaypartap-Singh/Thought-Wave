@@ -101,7 +101,7 @@ export default function MessageRequestButton({
 
   return (
     <Button
-      className={`w-full md:w-1/2 ${getButtonColor()} ${getTextColor()}`}
+      className={`w-full md:w-1/2 ${getButtonColor()} ${getTextColor()} hover:text-black`}
       onClick={() => handleMessageSentRequest(userId)}
       disabled={
         chatRequestStatus === "PENDING" || sendingChatRequest || loading
