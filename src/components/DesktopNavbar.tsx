@@ -12,7 +12,6 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 import {
@@ -29,7 +28,6 @@ export default function DesktopNavbar() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const { notifications } = useNotifications();
-  const [position, setPosition] = useState("bottom");
 
   const unreadNotifications = notifications.filter(
     (notification) => !notification.read

@@ -37,7 +37,7 @@ export default function NotificationsComponent({
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea className="h-[calc(100vh-15rem)]">
+        <ScrollArea className="h-[calc(100vh-20rem)]">
           {notifications.length === 0 ? (
             <div className="p-4 text-center text-muted-foreground">
               No notifications yet
