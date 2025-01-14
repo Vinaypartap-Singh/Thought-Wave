@@ -74,7 +74,7 @@ export default function ChatPage() {
     setIsLoading(true);
     try {
       const response = await getMessagesForRoom(roomId);
-      setMessages(response); // Assuming this is an array of messages
+      setMessages(response);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -83,6 +83,20 @@ export default function ChatPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Fetch messages for the selected chat
+  const fetchMessagesAgain = async (roomId: string) => {
+    try {
+      const response = await getMessagesForRoom(roomId);
+      setMessages(response);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch messages",
+        description: error instanceof Error ? error.message : String(error),
+      });
     }
   };
 
@@ -138,7 +152,7 @@ export default function ChatPage() {
         },
         (payload) => {
           // Fetch messages again upon new message insert
-          fetchMessages(selectedChat?.roomId || "");
+          fetchMessagesAgain(selectedChat?.roomId || "");
         }
       )
       .subscribe();
