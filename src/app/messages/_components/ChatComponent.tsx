@@ -1,6 +1,9 @@
-import { sendMessage } from "@/actions/room.action";
-import { useMessages } from "@/app/hooks/useMessages";
+"use client";
+
+import { getMessagesForRoom, sendMessage } from "@/actions/room.action";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useRef, useState } from "react";
 
 export default function ChatArea({
@@ -10,44 +13,94 @@ export default function ChatArea({
   roomId: string;
   senderId: string;
 }) {
-  const { messages, isLoading } = useMessages(roomId, senderId); // Use the custom hook for real-time messages
-  const [messageContent, setMessageContent] = useState<string>(""); // Message input state
-  const [sending, setSending] = useState<boolean>(false); // Sending state
-  const [error, setError] = useState<string | null>(null);
+  type Message = {
+    id: string;
+    content: string;
+    senderId: string;
+    roomId: string;
+    createdAt: Date;
+    sender: {
+      id: string;
+      username: string;
+      image: string | null;
+    };
+  };
 
-  // Ref for the scroll area
+  const { toast } = useToast();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageContent, setMessageContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [sending, setSending] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = async () => {
-    if (messageContent.trim() === "") return; // Prevent empty messages
-    setSending(true);
-
+  const fetchMessages = async () => {
+    setIsLoading(true);
     try {
-      await sendMessage(roomId, messageContent); // Send the message
-      setMessageContent(""); // Clear the input after sending
+      const response = await getMessagesForRoom(roomId);
+      console.log(response);
+      setMessages(response);
     } catch (error) {
-      setError("Error sending message.");
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch messages",
+        description: error instanceof Error ? error.message : String(error),
+      });
     } finally {
-      setSending(false); // Reset the sending state
+      setIsLoading(false);
     }
   };
 
-  // Handle keypress to send message
+  const handleSendMessage = async () => {
+    if (messageContent.trim() === "") return;
+
+    setSending(true);
+    try {
+      await sendMessage(roomId, messageContent);
+      setMessageContent("");
+    } catch (error) {
+      setError("Error sending message.");
+    } finally {
+      setSending(false);
+    }
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent default newline behavior
+      e.preventDefault();
       handleSendMessage();
     }
   };
 
-  // Scroll down function
   const scrollDown = () => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   };
 
-  // Call scrollDown whenever messages change
+  useEffect(() => {
+    const messagesChannel = supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "Message",
+          filter: `roomId=eq.${roomId}`,
+        },
+        (payload) => {
+          // Fetch messages again upon new message insert
+          fetchMessages();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      messagesChannel.unsubscribe();
+    };
+  }, [roomId]);
+
   useEffect(() => {
     scrollDown();
   }, [messages]);
@@ -83,34 +136,27 @@ export default function ChatArea({
                   <div
                     key={message.id}
                     className={`col-start-${
-                      message.senderId === senderId ? 6 : 1
+                      message?.senderId === senderId ? 6 : 1
                     } col-end-13 p-3 rounded-lg`}
                   >
                     <div
                       className={`flex ${
-                        message.senderId === senderId
+                        message?.senderId === senderId
                           ? "flex-row"
                           : "flex-row-reverse"
                       } items-center gap-2`}
                     >
                       <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-black flex-shrink-0">
-                        {message.sender.username.charAt(0).toUpperCase()}
+                        {message.sender?.username.charAt(0).toUpperCase()}
                       </div>
                       <div
                         className={`relative ${
-                          message.senderId === senderId ? "mr-3" : "ml-3"
+                          message?.senderId === senderId ? "mr-3" : "ml-3"
                         } text-sm bg-muted py-2 px-4 shadow rounded-xl border border-border`}
                       >
                         <div className="text-muted-foreground">
-                          {message.content}
+                          {message?.content}
                         </div>
-                        {/* <div
-                          className={`absolute text-xs bottom-0 ${
-                            message.senderId === senderId ? "left-0" : "right-0"
-                          } -mb-5 mr-2 text-muted-foreground`}
-                        >
-                          {message.createdAt ? "Seen" : "Sent"}{" "}
-                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -119,7 +165,6 @@ export default function ChatArea({
           </div>
         </div>
 
-        {/* Message Input */}
         <div className="flex flex-row items-center h-16 rounded-xl bg-muted w-full px-4 border-t border-border">
           <div className="flex-grow ml-4">
             <div className="relative w-full">
@@ -128,17 +173,14 @@ export default function ChatArea({
                 placeholder="Type a message"
                 className="flex w-full border border-border rounded-md focus:outline-none focus:border-primary pl-4 h-10 bg-input text-foreground"
                 value={messageContent}
-                onChange={(e) => setMessageContent(e.target.value)} // Update message content
-                onKeyDown={handleKeyPress} // Call the keypress handler
+                onChange={(e) => setMessageContent(e.target.value)}
+                onKeyDown={handleKeyPress}
               />
             </div>
           </div>
           <div className="ml-4">
-            <Button
-              onClick={handleSendMessage} // Handle message sending
-              disabled={sending} // Disable button while sending
-            >
-              {sending ? "Sending..." : "Send"} {/* Button text change */}
+            <Button onClick={handleSendMessage} disabled={sending}>
+              {sending ? "Sending..." : "Send"}
             </Button>
           </div>
         </div>

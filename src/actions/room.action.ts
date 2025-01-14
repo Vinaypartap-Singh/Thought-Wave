@@ -73,8 +73,7 @@ export async function sendMessage(roomId: string, content: string) {
         });
 
         // Revalidate the path after creating the message
-        revalidatePath("/");
-
+        revalidatePath("/messages");
         return message;
     } catch (error) {
         // Log error with more detail
@@ -87,8 +86,6 @@ export async function sendMessage(roomId: string, content: string) {
         }
     }
 }
-
-
 
 
 export async function getMessagesForRoom(roomId: string) {

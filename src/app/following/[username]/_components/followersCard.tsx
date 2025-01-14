@@ -53,7 +53,7 @@ export default function followingsCard({ users }: { users: any }) {
                     </div>
                   </div>
                   <Button variant={"outline"} asChild>
-                    <Link href={`/user/${user.following.username}`}>
+                    <Link href={`/profile/${user.following.username}`}>
                       View Profile
                     </Link>
                   </Button>

@@ -50,7 +50,7 @@ export default async function FollowersCard({ users }: { users: any }) {
                     </div>
                   </div>
                   <Button variant={"outline"} asChild>
-                    <Link href={`/user/${user.follower.username}`}>
+                    <Link href={`/profile/${user.follower.username}`}>
                       View Profile
                     </Link>
                   </Button>

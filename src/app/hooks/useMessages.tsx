@@ -3,9 +3,9 @@
 import { getMessagesForRoom } from "@/actions/room.action";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-export const useMessages = (roomId: string, senderId: string) => {
+export const useMessages = (roomId: string) => {
   type Message = {
     id: string;
     content: string;
@@ -23,12 +23,12 @@ export const useMessages = (roomId: string, senderId: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Function to fetch all messages
-  const fetchMessages = async () => {
+  // Function to fetch messages
+  const fetchMessages = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await getMessagesForRoom(roomId);
-      setMessages(response); // Update state with messages
+      setMessages(response);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -38,35 +38,46 @@ export const useMessages = (roomId: string, senderId: string) => {
     } finally {
       setIsLoading(false);
     }
+  }, [roomId, toast]);
+
+  // Function to handle new messages
+  const handleNewMessage = (newMessage: Message) => {
+    setMessages((prevMessages) => {
+      // Avoid duplicates in case of re-inserted messages
+      if (prevMessages.some((msg) => msg.id === newMessage.id)) {
+        return prevMessages;
+      }
+      return [...prevMessages, newMessage];
+    });
   };
 
   useEffect(() => {
-    // Initial fetch when the component is mounted
+    // Fetch initial messages
     fetchMessages();
 
+    // Subscribe to real-time updates
     const messagesChannel = supabase
       .channel("custom-all-channel")
       .on(
         "postgres_changes",
         {
-          event: "*", // Listen for all events (INSERT, UPDATE, DELETE)
+          event: "INSERT",
           schema: "public",
           table: "Message",
-          filter: `roomId=eq.${roomId}`, // Filter for messages from the specific room
+          filter: `roomId=eq.${roomId}`,
         },
-        async (payload) => {
-          // Refetch messages when there's a change
-          console.log("Payload received:", payload); // Debugging purpose
-          await fetchMessages(); // Refetch messages after a change
+        (payload) => {
+          const newMessage = payload.new as Message;
+          handleNewMessage(newMessage);
         }
       )
       .subscribe();
 
-    // Cleanup on unmount: Unsubscribe from the channel
+    // Cleanup subscription
     return () => {
       messagesChannel.unsubscribe();
     };
-  }, [roomId, toast]);
+  }, [fetchMessages, roomId]); // No `messages` dependency here
 
   return { messages, isLoading };
 };
