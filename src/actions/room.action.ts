@@ -90,7 +90,7 @@ export async function sendMessage(roomId: string, content: string) {
 
 export async function getMessagesForRoom(roomId: string) {
     try {
-        // Fetch room by senderId and receiverId
+
         const messages = await prisma.message.findMany({
             where: {
                 roomId,
@@ -99,7 +99,7 @@ export async function getMessagesForRoom(roomId: string) {
                 sender: true, // Optionally include sender details in the response
             },
             orderBy: {
-                createdAt: 'desc', // Sort messages by creation date
+                createdAt: 'asc', // Sort messages by creation date
             },
         });
 

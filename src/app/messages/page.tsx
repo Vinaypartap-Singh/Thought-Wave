@@ -158,6 +158,8 @@ export default function ChatPage() {
     scrollDown();
   }, [messages]);
 
+  console.log(messages);
+
   return (
     <div className="flex flex-col sm:flex-row min-h-[calc(100vh-14rem)] antialiased text-foreground bg-background shadow-md border border-border">
       {/* Sidebar */}
@@ -217,7 +219,7 @@ export default function ChatPage() {
           <div className="w-full h-full">
             <div
               ref={scrollAreaRef}
-              className="flex flex-col-reverse h-[calc(100vh-20rem)] overflow-y-auto hide-scrollbar"
+              className="flex flex-col h-[calc(100vh-20rem)] overflow-y-auto hide-scrollbar"
             >
               {isLoading ? (
                 <div className="h-full flex items-center justify-center gap-4">
