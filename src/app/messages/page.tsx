@@ -2,13 +2,16 @@
 
 import { getMessagesForRoom, sendMessage } from "@/actions/room.action";
 import getAcceptedChatRequests from "@/actions/user.action";
+import Loader from "@/components/Loader";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { useEffect, useRef, useState } from "react";
 
 export default function ChatPage() {
   const { toast } = useToast();
+
   interface Chat {
     id: string;
     senderId: string;
@@ -27,9 +30,12 @@ export default function ChatPage() {
   const [acceptedChats, setAcceptedChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   interface Message {
-    sender: string;
-    text: string;
+    id: string;
+    senderId: string;
+    content: string;
+    createdAt: Date;
   }
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -40,6 +46,7 @@ export default function ChatPage() {
   } | null>(null);
   const [newMessage, setNewMessage] = useState(""); // state to store the new message
   const [sending, setSending] = useState(false); // state for sending status
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchAcceptedChats() {
@@ -95,9 +102,15 @@ export default function ChatPage() {
 
       setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: "You", text: newMessage },
+        {
+          id: new Date().toISOString(),
+          senderId: "You",
+          content: newMessage,
+          createdAt: new Date(),
+        },
       ]);
       setNewMessage("");
+      setSending(false);
     } catch (error) {
       setError("Error sending message.");
     } finally {
@@ -111,6 +124,39 @@ export default function ChatPage() {
       handleSendMessage();
     }
   };
+
+  useEffect(() => {
+    const messagesChannel = supabase
+      .channel("custom-all-channel")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "Message",
+          filter: `roomId=eq.${selectedChat?.roomId}`,
+        },
+        (payload) => {
+          // Fetch messages again upon new message insert
+          fetchMessages(selectedChat?.roomId || "");
+        }
+      )
+      .subscribe();
+
+    return () => {
+      messagesChannel.unsubscribe();
+    };
+  }, [selectedChat?.roomId, messages]);
+
+  const scrollDown = () => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollDown();
+  }, [messages]);
 
   return (
     <div className="flex flex-col sm:flex-row min-h-[calc(100vh-14rem)] antialiased text-foreground bg-background shadow-md border border-border">
@@ -166,12 +212,17 @@ export default function ChatPage() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 min-h-[calc(100vh-14rem)]">
         {selectedChat ? (
           <div className="w-full h-full">
-            <div className="flex flex-col-reverse">
+            <div
+              ref={scrollAreaRef}
+              className="flex flex-col-reverse h-[calc(100vh-20rem)] overflow-y-auto hide-scrollbar"
+            >
               {isLoading ? (
-                <p>Loading messages...</p>
+                <div className="h-full flex items-center justify-center gap-4">
+                  <Loader /> Loading messages...
+                </div>
               ) : messages.length > 0 ? (
                 messages.map((message: any, idx: number) => (
                   <div
