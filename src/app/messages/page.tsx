@@ -127,7 +127,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     const messagesChannel = supabase
-      .channel("custom-all-channel")
+      .channel("custom-insert-channel")
       .on(
         "postgres_changes",
         {
