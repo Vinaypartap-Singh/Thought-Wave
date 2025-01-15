@@ -7,6 +7,13 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
+import {
+  arrayBufferToBase64,
+  base64ToArrayBuffer,
+  decryptMessage,
+  encryptMessage,
+  generateKey,
+} from "@/utils/encryption";
 import { useEffect, useRef, useState } from "react";
 
 export default function ChatPage() {
@@ -18,11 +25,13 @@ export default function ChatPage() {
     receiverId: string;
     status: "PENDING" | "ACCEPTED" | "REJECTED" | "NOT_REQUESTED";
     createdAt: Date;
+    senderEncryptionKey?: string | null;
     sender: {
       id: string;
       username: string;
       name: string | null;
       image: string | null;
+      encryptionKey: string | null;
     };
     roomId: string | null;
   }
@@ -36,6 +45,7 @@ export default function ChatPage() {
     senderId: string;
     content: string;
     createdAt: Date;
+    senderEncryptionKey?: string | null; // Added this field for sender's encryption key
   }
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,6 +53,7 @@ export default function ChatPage() {
   const [selectedChat, setSelectedChat] = useState<{
     roomId: string;
     senderId: string;
+    encryptedKey?: string | null;
   } | null>(null);
   const [newMessage, setNewMessage] = useState(""); // state to store the new message
   const [sending, setSending] = useState(false); // state for sending status
@@ -69,12 +80,40 @@ export default function ChatPage() {
     fetchAcceptedChats();
   }, []);
 
-  // Fetch messages for the selected chat
   const fetchMessages = async (roomId: string) => {
     setIsLoading(true);
     try {
       const response = await getMessagesForRoom(roomId);
-      setMessages(response);
+
+      const decryptedMessages = await Promise.all(
+        response.map(async (message: any) => {
+          const encryptionKey = message.senderEncryptionKey!;
+
+          if (encryptionKey) {
+            const { iv, content } = message;
+
+            const ivArrayBuffer = base64ToArrayBuffer(iv);
+            const encryptedContentArrayBuffer = base64ToArrayBuffer(content);
+            const encryptionKeyBuffer = base64ToArrayBuffer(encryptionKey);
+
+            const decryptedMessage = await decryptMessage(
+              encryptionKeyBuffer,
+              ivArrayBuffer,
+              encryptedContentArrayBuffer
+            );
+
+            return {
+              ...message,
+              content: decryptedMessage,
+              decrypted: true,
+            };
+          }
+
+          return message;
+        })
+      );
+
+      setMessages(decryptedMessages);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -86,46 +125,70 @@ export default function ChatPage() {
     }
   };
 
-  // Fetch messages for the selected chat
-  const fetchMessagesAgain = async (roomId: string) => {
-    try {
-      const response = await getMessagesForRoom(roomId);
-      setMessages(response);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Failed to fetch messages",
-        description: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
   // Handle button click to set the selected chat and fetch messages
-  const handleChatButtonClick = (roomId: string, senderId: string) => {
-    setSelectedChat({ roomId, senderId });
+  const handleChatButtonClick = (
+    roomId: string,
+    senderId: string,
+    encryptedKey: string
+  ) => {
+    setSelectedChat({
+      roomId: roomId || "",
+      senderId: senderId,
+      encryptedKey: encryptedKey,
+    });
     fetchMessages(roomId); // Fetch messages for the selected chat
   };
 
-  // Handle sending a new message
   const handleSendMessage = async () => {
     if (newMessage.trim() === "") return;
 
+    let encryptionKey =
+      selectedChat?.encryptedKey ||
+      acceptedChats.find((chat) => chat.senderId === selectedChat?.senderId)
+        ?.senderEncryptionKey;
+
+    // If no encryption key found, generate one and store it
+    if (!encryptionKey) {
+      const key = await generateKey(); // Generate a new key
+      encryptionKey = arrayBufferToBase64(
+        await crypto.subtle.exportKey("raw", key)
+      ); // Convert key to base64 string
+    }
+
+    if (!encryptionKey) {
+      setError("Encryption key is missing.");
+      return;
+    }
+
     setSending(true);
     try {
-      await sendMessage(selectedChat?.roomId!, newMessage);
+      const encryptionKeyBuffer = base64ToArrayBuffer(encryptionKey);
+      const { iv, encryptedData } = await encryptMessage(
+        encryptionKeyBuffer,
+        newMessage
+      );
+      const encryptedContent = arrayBufferToBase64(encryptedData.buffer);
+      const ivBase64 = arrayBufferToBase64(iv.buffer);
+
+      await sendMessage(
+        selectedChat?.roomId!,
+        encryptedContent,
+        ivBase64,
+        encryptionKey
+      );
 
       setMessages((prevMessages) => [
         ...prevMessages,
         {
-          id: new Date().toISOString(),
+          id: crypto.randomUUID(),
           senderId: "You",
           content: newMessage,
           createdAt: new Date(),
         },
       ]);
       setNewMessage("");
-      setSending(false);
     } catch (error) {
+      console.error("Error sending message:", error);
       setError("Error sending message.");
     } finally {
       setSending(false);
@@ -151,8 +214,7 @@ export default function ChatPage() {
           filter: `roomId=eq.${selectedChat?.roomId}`,
         },
         (payload) => {
-          // Fetch messages again upon new message insert
-          fetchMessagesAgain(selectedChat?.roomId || "");
+          fetchMessages(selectedChat?.roomId || "");
         }
       )
       .subscribe();
@@ -171,8 +233,6 @@ export default function ChatPage() {
   useEffect(() => {
     scrollDown();
   }, [messages]);
-
-  console.log(messages);
 
   return (
     <div className="flex flex-col sm:flex-row min-h-[calc(100vh-14rem)] antialiased text-foreground bg-background shadow-md border border-border">
@@ -203,7 +263,11 @@ export default function ChatPage() {
                 asChild
                 variant={"outline"}
                 onClick={() =>
-                  handleChatButtonClick(chat.roomId || "", chat.sender.id)
+                  handleChatButtonClick(
+                    chat.roomId || "",
+                    chat.sender.id,
+                    chat.sender.encryptionKey || ""
+                  )
                 }
               >
                 <div className="flex justify-start items-center px-4 py-3 hover:bg-muted">
@@ -272,32 +336,34 @@ export default function ChatPage() {
                   </div>
                 ))
               ) : (
-                <p>No messages found.</p>
+                <div className="h-full flex justify-center items-center">
+                  No messages yet.
+                </div>
               )}
             </div>
 
-            {/* Message Input and Send Button */}
-            <div className="flex items-center mt-4">
+            {/* Input area */}
+            <div className="mt-6 flex items-center gap-4">
               <input
                 type="text"
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder="Type your message..."
+                onChange={(e) => setNewMessage(e.target.value)}
                 className="flex-1 p-2 border border-muted rounded-l-md"
+                placeholder="Type a message"
               />
               <Button
-                className="ml-2"
+                variant="default"
                 onClick={handleSendMessage}
-                disabled={!newMessage.trim() || sending}
+                disabled={sending}
               >
                 {sending ? "Sending..." : "Send"}
               </Button>
             </div>
           </div>
         ) : (
-          <div className="flex justify-center items-center h-full">
-            Click on User Profile To View Chat.
+          <div className="h-full flex justify-center items-center">
+            <div>Select a chat to start messaging</div>
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { arrayBufferToBase64, generateKey } from "@/utils/encryption";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -13,19 +14,53 @@ export async function syncUser() {
         const user = await currentUser()
 
         // If User is not logged in, return
-
         if (!user || !userId) return
 
         // Check If User Exists in database
-
         const existingUser = await prisma.user.findUnique({
             where: {
                 clerkId: userId
             }
         })
 
-        if (existingUser) return existingUser
+        // If user exists and the encryption key is not null, return the user
+        if (existingUser && existingUser.encryptionKey) {
+            return existingUser
+        }
 
+        // If user exists but the encryption key is null, generate and update the key
+        if (existingUser && !existingUser.encryptionKey) {
+            const encryptionKey = await generateKey()
+
+            // Export the key to store in the database (as a Uint8Array)
+            const exportedKey = await crypto.subtle.exportKey("raw", encryptionKey)
+
+            // Convert the key to base64 string
+            const exportedKeyBase64 = arrayBufferToBase64(exportedKey)
+
+            // Update the existing user with the new encryption key
+            const updatedUser = await prisma.user.update({
+                where: {
+                    clerkId: userId
+                },
+                data: {
+                    encryptionKey: exportedKeyBase64, // Store the base64 encoded key
+                },
+            })
+
+            return updatedUser
+        }
+
+        // If user doesn't exist, create a new user and generate an encryption key
+        const encryptionKey = await generateKey()
+
+        // Export the key to store in the database (as a Uint8Array)
+        const exportedKey = await crypto.subtle.exportKey("raw", encryptionKey)
+
+        // Convert the key to base64 string
+        const exportedKeyBase64 = arrayBufferToBase64(exportedKey)
+
+        // Create the user in the database
         const dbUser = await prisma.user.create({
             data: {
                 clerkId: userId,
@@ -33,16 +68,15 @@ export async function syncUser() {
                 username: user.username ?? user.emailAddresses[0].emailAddress.split("@")[0],
                 email: user.emailAddresses[0].emailAddress,
                 image: user.imageUrl,
+                encryptionKey: exportedKeyBase64, // Store the base64 encoded key
             },
-        });
+        })
 
-        return dbUser;
-
+        return dbUser
     } catch (error) {
         console.error(error)
     }
 }
-
 
 export async function getUserByClerkId(clerkId: string) {
     return prisma.user.findUnique({
@@ -561,7 +595,8 @@ export default async function getAcceptedChatRequests() {
                         id: true,
                         name: true,
                         image: true,
-                        username: true
+                        username: true,
+                        encryptionKey: true
                     }
                 }
             }

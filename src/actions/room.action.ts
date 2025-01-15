@@ -47,7 +47,7 @@ export async function createRoom(senderId: string, receiverId: string) {
     }
 }
 
-export async function sendMessage(roomId: string, content: string) {
+export async function sendMessage(roomId: string, content: string, ivBase64: string, senderKey: string) {
     try {
         // Get senderId from the database using getDbUserID
         const senderId = await getDbUserID();
@@ -61,14 +61,16 @@ export async function sendMessage(roomId: string, content: string) {
         }
 
         // Log before sending to Prisma for debugging purposes
-        console.log("Creating message with payload:", { roomId, senderId, content });
+        console.log("Creating message with payload:", { roomId, senderId, content, ivBase64 });
 
-        // Create the message
+        // Create the message in the database
         const message = await prisma.message.create({
             data: {
-                roomId: roomId,
+                roomId,
                 senderId,
                 content,
+                iv: ivBase64,  // Store the IV as Base64
+                senderEncryptionKey: senderKey
             },
         });
 
@@ -86,7 +88,6 @@ export async function sendMessage(roomId: string, content: string) {
         }
     }
 }
-
 
 export async function getMessagesForRoom(roomId: string) {
     try {
