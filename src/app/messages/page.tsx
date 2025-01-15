@@ -212,7 +212,7 @@ export default function ChatPage() {
       const encryptedContent = arrayBufferToBase64(encryptedData.buffer);
       const ivBase64 = arrayBufferToBase64(iv.buffer);
 
-      await sendMessage(
+      const sentMessage = await sendMessage(
         selectedChat?.roomId!,
         encryptedContent,
         ivBase64,
