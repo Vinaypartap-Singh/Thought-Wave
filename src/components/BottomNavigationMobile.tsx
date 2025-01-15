@@ -1,12 +1,19 @@
 "use client"; // Ensures this component is client-side
+import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 import { useUser } from "@clerk/nextjs"; // Use useUser for client-side
-import { Bell, Home, Image, Search, User } from "lucide-react";
+import {
+  Bell,
+  Home,
+  Image,
+  MessageSquareCode,
+  Search,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { useNotifications } from "@/app/hooks/useNotificationRealtime";
 
 export default function BottomNavigation() {
-  const { user } = useUser(); // Use Clerk's client-side hook to fetch user data
+  const { user, isSignedIn } = useUser(); // Use Clerk's client-side hook to fetch user data
   const { notifications } = useNotifications(); // Use the custom hook for notifications
 
   const unreadNotifications = notifications.filter(
@@ -41,6 +48,21 @@ export default function BottomNavigation() {
             </span>
           </Link>
         </Button>
+
+        {isSignedIn && (
+          <Button
+            variant={"link"}
+            type="button"
+            className="inline-flex flex-col items-center justify-center px-5 group"
+            asChild
+          >
+            <Link href={`/messages`}>
+              <span className="flex items-center flex-col text-sm text-gray-500 dark:text-gray-400 dark:group-hover:text-red-500">
+                <MessageSquareCode className="size-4" />
+              </span>
+            </Link>
+          </Button>
+        )}
 
         <Button
           variant={"link"}

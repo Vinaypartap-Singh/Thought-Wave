@@ -125,6 +125,48 @@ export default function ChatPage() {
     }
   };
 
+  const fetchMessagesAgain = async (roomId: string) => {
+    try {
+      const response = await getMessagesForRoom(roomId);
+
+      const decryptedMessages = await Promise.all(
+        response.map(async (message: any) => {
+          const encryptionKey = message.senderEncryptionKey!;
+
+          if (encryptionKey) {
+            const { iv, content } = message;
+
+            const ivArrayBuffer = base64ToArrayBuffer(iv);
+            const encryptedContentArrayBuffer = base64ToArrayBuffer(content);
+            const encryptionKeyBuffer = base64ToArrayBuffer(encryptionKey);
+
+            const decryptedMessage = await decryptMessage(
+              encryptionKeyBuffer,
+              ivArrayBuffer,
+              encryptedContentArrayBuffer
+            );
+
+            return {
+              ...message,
+              content: decryptedMessage,
+              decrypted: true,
+            };
+          }
+
+          return message;
+        })
+      );
+
+      setMessages(decryptedMessages);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to fetch messages",
+        description: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
   // Handle button click to set the selected chat and fetch messages
   const handleChatButtonClick = (
     roomId: string,
@@ -214,7 +256,7 @@ export default function ChatPage() {
           filter: `roomId=eq.${selectedChat?.roomId}`,
         },
         (payload) => {
-          fetchMessages(selectedChat?.roomId || "");
+          fetchMessagesAgain(selectedChat?.roomId || "");
         }
       )
       .subscribe();

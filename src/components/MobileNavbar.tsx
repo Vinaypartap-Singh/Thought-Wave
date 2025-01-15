@@ -15,6 +15,7 @@ import {
   HomeIcon,
   LogOutIcon,
   MenuIcon,
+  MessageSquareCode,
   MoonIcon,
   SunIcon,
   UserIcon,
@@ -74,6 +75,19 @@ function MobileNavbar() {
                 Blogs
               </a>
             </Button>
+
+            {isSignedIn && (
+              <Button
+                variant="ghost"
+                className="flex items-center gap-3 justify-start"
+                asChild
+              >
+                <Link href="/">
+                  <MessageSquareCode className="w-4 h-4" />
+                  Messages
+                </Link>
+              </Button>
+            )}
 
             {isSignedIn ? (
               <>

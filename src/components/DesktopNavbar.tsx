@@ -51,12 +51,14 @@ export default function DesktopNavbar() {
         </Link>
       </Button>
 
-      <Button variant="ghost" className="flex items-center gap-2" asChild>
-        <Link href="/messages">
-          <MessageSquareCode className="w-4 h-4" />
-          <span className="hidden lg:inline">Messages</span>
-        </Link>
-      </Button>
+      {user && (
+        <Button variant="ghost" className="flex items-center gap-2" asChild>
+          <Link href="/messages">
+            <MessageSquareCode className="w-4 h-4" />
+            <span className="hidden lg:inline">Messages</span>
+          </Link>
+        </Button>
+      )}
 
       <Button variant="ghost" className="flex items-center gap-2" asChild>
         <Link href="/search">
