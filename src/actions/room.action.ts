@@ -60,9 +60,6 @@ export async function sendMessage(roomId: string, content: string, ivBase64: str
             throw new Error("Room ID or content is invalid");
         }
 
-        // Log before sending to Prisma for debugging purposes
-        console.log("Creating message with payload:", { roomId, senderId, content, ivBase64 });
-
         // Create the message in the database
         const message = await prisma.message.create({
             data: {
