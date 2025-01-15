@@ -605,30 +605,23 @@ export default async function getAcceptedChatRequests() {
         // Fetch the roomId for each accepted chat request
         const acceptedChatRequestsWithRoom = await Promise.all(
             acceptedChatRequests.map(async (request) => {
-                // Ensure you're fetching room information for both sender and receiver
-                const roomMembers = await prisma.roomMember.findMany({
+                // Find the room where both the sender and receiver are members
+                const sharedRoom = await prisma.room.findFirst({
                     where: {
-                        userId: {
-                            in: [request.senderId, userId] // Find rooms with either sender or receiver
-                        }
-                    },
-                    include: {
-                        room: {
-                            select: {
-                                id: true
+                        users: {
+                            every: {
+                                userId: { in: [userId, request.senderId] }
                             }
                         }
+                    },
+                    select: {
+                        id: true
                     }
                 });
 
-                // Ensure roomId is fetched correctly based on sender and receiver
-                const roomId = roomMembers
-                    .filter((roomMember) => roomMember.userId !== userId) // Filter out the current user
-                    .map((roomMember) => roomMember.room.id)[0] || null;
-
                 return {
                     ...request,
-                    roomId: roomId
+                    roomId: sharedRoom?.id || null
                 };
             })
         );
