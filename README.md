@@ -8,9 +8,10 @@ The newly launched website, [ThoughtWave](https://thought-wave-vinay.vercel.app/
 
 In an age dominated by fleeting trends and surface-level exchanges, ThoughtWave stands out as a space designed for depth, creativity, and connection. Here’s why ThoughtWave is your next go-to platform:
 
--   **Community-Centered:** ThoughtWave brings together people who value meaningful conversations.
--   **Personalized Experience:** Tailor your feed and discover ideas that resonate with your interests.
--   **Authentic Sharing:** A platform built not for virality, but for authenticity and thoughtfulness.
+- **Secure Conversations:** Engage in private, encrypted chats with other users. Your conversations are stored securely and only accessible to you and your trusted connections.
+- **Community-Centered:** ThoughtWave brings together people who value meaningful conversations.
+- **Personalized Experience:** Tailor your feed and discover ideas that resonate with your interests.
+- **Authentic Sharing:** A platform built not for virality, but for authenticity and thoughtfulness.
 
 ### **Key Features of the Website**
 
@@ -20,18 +21,20 @@ The new ThoughtWave website is sleek, intuitive, and packed with features to mak
 2.  **User Profiles:** Showcase your personality by creating a profile that reflects your thoughts and passions.
 3.  **Thought Sharing:** Post your insights, reflections, or questions to spark meaningful conversations.
 4.  **Explore Section:** Discover trending ideas, connect with new users, and find inspiration from the ThoughtWave community.
-5.  **Seamless Navigation:** The website is designed to make browsing, posting, and connecting effortless.
+5.  **Encrypted Messaging:** Request and accept chat invitations to connect privately with others. Messages are encrypted for maximum security, ensuring your thoughts and discussions stay confidential.
+6.  **Seamless Navigation:** The website is designed to make browsing, posting, and connecting effortless.
 
 ### **How to Get Started**
 
 1.  **Visit the Website:** Go to [ThoughtWave](https://thought-wave-vinay.vercel.app/).
 2.  **Sign Up:** Create your profile to start sharing and engaging.
 3.  **Explore:** Browse trending thoughts, follow users, and join the conversations.
-4.  **Share:** Post your ideas and become part of the wave.
+4.  **Chat Securely:** Request or accept chat invitations to start private, encrypted conversations.
+5.  **Share:** Post your ideas and become part of the wave.
 
 ### **Join the Movement**
 
-ThoughtWave is more than just a website — it’s a movement to bring people together through ideas and conversations. With this launch, we’re inviting you to be part of a platform that prioritizes authenticity, creativity, and community.
+ThoughtWave is more than just a website — it’s a movement to bring people together through ideas and conversations. With this launch, we’re inviting you to be part of a platform that prioritizes authenticity, creativity, security, and community.
 
 Let’s make waves together, one thought at a time. Dive into the conversation today and help shape the future of meaningful connections online.
 
@@ -39,4 +42,4 @@ Let’s make waves together, one thought at a time. Dive into the conversation t
 
 Check out the website at [ThoughtWave](https://thought-wave-vinay.vercel.app/) and become part of a growing community where your ideas matter.
 
-**ThoughtWave** — Where Ideas Flow, and Minds Meet. 🌟
+**ThoughtWave** — Where Ideas Flow, and Minds Meet Securely. 🌟
