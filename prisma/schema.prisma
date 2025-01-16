@@ -9,19 +9,20 @@ datasource db {
 }
 
 model User {
-  id            String      @id @default(cuid())
-  email         String      @unique
-  username      String      @unique
-  clerkId       String      @unique
-  name          String?
-  bio           String?
-  image         String?
-  location      String?
-  website       String?
-  profileType   ProfileType @default(PUBLIC)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  encryptionKey String?
+  id              String      @id @default(cuid())
+  email           String      @unique
+  username        String      @unique
+  clerkId         String      @unique
+  name            String?
+  bio             String?
+  image           String?
+  location        String?
+  website         String?
+  businessProfile Boolean     @default(false)
+  profileType     ProfileType @default(PUBLIC)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  encryptionKey   String?
 
   // Relations
   posts                Post[]
