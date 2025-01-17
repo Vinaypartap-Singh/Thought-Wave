@@ -40,8 +40,42 @@ model User {
 
   RoomMember RoomMember[]
 
+  // Business Relations
+  stores Store[] // A user can own multiple stores
+
   // Reverse relation for messages sent by the user
   sentMessages Message[] @relation("sentMessages")
+}
+
+model Store {
+  id        String   @id @default(cuid())
+  name      String
+  image     String?
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  products Product[] // A store can have multiple products
+
+  @@index([ownerId])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  storeId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
 }
 
 model Post {
