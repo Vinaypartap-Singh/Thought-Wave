@@ -480,9 +480,8 @@ function ProfilePageClient({
               <div className="space-y-2">
                 <Label>
                   <span className="text-red-500 font-bold text-lg">Note:</span>{" "}
-                  To update your profile image, click the profile icon in the
-                  top-right corner. Once updated, click here to sync the image
-                  with the database.
+                  Click on Photo Button To Upload and then click on update
+                  image.
                 </Label>
               </div>
 

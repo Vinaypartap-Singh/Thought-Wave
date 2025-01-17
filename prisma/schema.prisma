@@ -41,8 +41,7 @@ model User {
   RoomMember RoomMember[]
 
   // Business Relations
-  stores Store[] // A user can own multiple stores
-
+  stores       Store?
   // Reverse relation for messages sent by the user
   sentMessages Message[] @relation("sentMessages")
 }
@@ -51,7 +50,7 @@ model Store {
   id        String   @id @default(cuid())
   name      String
   image     String?
-  ownerId   String
+  ownerId   String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

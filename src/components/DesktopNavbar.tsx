@@ -6,9 +6,11 @@ import {
   Bell,
   Home,
   Image,
+  LogOut,
   MessageSquareCode,
   PenLine,
   Search,
+  Store,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -122,7 +124,19 @@ export default function DesktopNavbar() {
                       }`}
                     >
                       <User className="w-4 h-4" />
-                      <span className="hidden lg:inline">Profile</span>
+                      <span className="hidden lg:inline">Your Profile</span>
+                    </Link>
+                  </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center justify-start  gap-2"
+                    asChild
+                  >
+                    <Link href={`/store`}>
+                      <Store className="w-4 h-4" />
+                      <span className="hidden lg:inline">Your Store</span>
                     </Link>
                   </Button>
                 </DropdownMenuItem>
@@ -135,7 +149,7 @@ export default function DesktopNavbar() {
                     variant="ghost"
                     className="w-full flex justify-start items-center gap-2"
                   >
-                    <User className="w-4 h-4" />
+                    <LogOut className="w-4 h-4" />
                     <span className="hidden lg:inline">Sign Out</span>
                   </Button>
                 </DropdownMenuItem>
