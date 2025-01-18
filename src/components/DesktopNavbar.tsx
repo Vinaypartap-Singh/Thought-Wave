@@ -10,6 +10,7 @@ import {
   MessageSquareCode,
   PenLine,
   Search,
+  ShoppingBag,
   Store,
   User,
 } from "lucide-react";
@@ -58,6 +59,15 @@ export default function DesktopNavbar() {
           <Link href="/messages">
             <MessageSquareCode className="w-4 h-4" />
             <span className="hidden lg:inline">Messages</span>
+          </Link>
+        </Button>
+      )}
+
+      {user && (
+        <Button variant="ghost" className="flex items-center gap-2" asChild>
+          <Link href="/store">
+            <ShoppingBag className="w-4 h-4" />
+            <span className="hidden lg:inline">Store</span>
           </Link>
         </Button>
       )}

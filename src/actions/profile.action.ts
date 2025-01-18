@@ -1,10 +1,10 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { ProfileType } from "@/app/profile/[username]/ProfilePageClient";
 import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { getDbUserID } from "./user.action";
-import { ProfileType } from "@/app/profile/[username]/ProfilePageClient";
 
 export async function getProfileByUsername(username: string) {
     try {
@@ -330,3 +330,45 @@ export async function isFollowing(userId: string) {
         return false;
     }
 }
+
+export async function getUserOrders() {
+    const userId = await getDbUserID();
+
+    if (!userId) {
+        throw new Error("Unauthorized");
+    }
+
+    try {
+        const orders = await prisma.order.findMany({
+            where: {
+                userId: userId,
+            },
+            include: {
+                products: {
+                    select: {
+                        product: {
+                            select: {
+                                name: true,
+                                description: true,
+                                price: true,
+                                image: true,
+                            },
+                        },
+                        quantity: true,
+                        price: true,
+                    },
+                },
+
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        return orders;
+    } catch (error) {
+        console.error("Error fetching user orders:", error);
+        throw new Error("Failed to fetch user orders");
+    }
+}
+

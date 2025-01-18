@@ -42,11 +42,13 @@ import {
   ImageIcon,
   LinkIcon,
   MapPinIcon,
+  ShoppingBag,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import MessageRequestButton from "./_components/MessageRequestButton";
+import YourOrder from "./_components/YourOrder";
 
 type User = Awaited<ReturnType<typeof getPublicUserInfo>>;
 type Posts = Awaited<ReturnType<typeof getUserPosts>>;
@@ -57,6 +59,7 @@ interface ProfilePageClientProps {
   likedPosts: Posts;
   isFollowing: boolean;
   currentProfileImage?: string;
+  userOrders: any;
 }
 
 export enum ProfileType {
@@ -69,6 +72,7 @@ function ProfilePageClient({
   likedPosts,
   posts,
   user,
+  userOrders,
 }: ProfilePageClientProps) {
   const { toast } = useToast();
   const { user: currentUser } = useUser();
@@ -77,11 +81,7 @@ function ProfilePageClient({
   const [isUpdatingFollow, setIsUpdatingFollow] = useState(false);
   const [showProfileImageDialog, setShowProfileImageDialog] = useState(false);
 
-  // Chat Requested
-
   const [sendingChatRequest, setSendingChatRequest] = useState(false);
-
-  // Use State for Edit Profile Form
 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -353,6 +353,15 @@ function ProfilePageClient({
               <HeartIcon className="size-4" />
               Liked Posts
             </TabsTrigger>
+
+            <TabsTrigger
+              value="orders"
+              className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary
+               data-[state=active]:bg-transparent px-6 font-semibold"
+            >
+              <ShoppingBag className="size-4" />
+              Your Orders
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="posts" className="mt-6">
@@ -378,6 +387,21 @@ function ProfilePageClient({
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   No liked posts to show
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="orders" className="mt-6">
+            <div className="space-y-6 grid grid-cols-2 gap-4">
+              {userOrders.length > 0 ? (
+                userOrders.map((product: any, index: number) => (
+                  // console.log(product)
+                  <YourOrder key={index} products={product} />
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No Orders Placed
                 </div>
               )}
             </div>

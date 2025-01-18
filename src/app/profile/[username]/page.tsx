@@ -2,6 +2,7 @@ import {
   getProfileByUsername,
   getPublicUserInfo,
   getUserLikedPosts,
+  getUserOrders,
   getUserPosts,
   isFollowing,
 } from "@/actions/profile.action";
@@ -26,11 +27,13 @@ async function ProfilePageServer({ params }: any) {
 
   if (!user) notFound();
 
-  const [posts, likedPosts, isCurrentUserFollowing] = await Promise.all([
-    getUserPosts(user.id),
-    getUserLikedPosts(user.id),
-    isFollowing(user.id),
-  ]);
+  const [posts, likedPosts, isCurrentUserFollowing, userOrders] =
+    await Promise.all([
+      getUserPosts(user.id),
+      getUserLikedPosts(user.id),
+      isFollowing(user.id),
+      getUserOrders(),
+    ]);
 
   const profileImageCurrent = await currentUser();
 
@@ -41,6 +44,7 @@ async function ProfilePageServer({ params }: any) {
       likedPosts={likedPosts}
       isFollowing={isCurrentUserFollowing}
       currentProfileImage={profileImageCurrent?.imageUrl}
+      userOrders={userOrders}
     />
   );
 }
