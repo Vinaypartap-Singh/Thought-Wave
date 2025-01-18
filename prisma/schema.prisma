@@ -68,6 +68,7 @@ model Product {
   price       Float
   image       String?
   storeId     String
+  userId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -14,7 +14,7 @@ export default function AddProductPage() {
   const [productForm, setProductForm] = useState({
     name: "",
     description: "",
-    price: 0,
+    price: "",
     image: "",
   });
   const [uploading, setUploading] = useState(false);
@@ -55,12 +55,12 @@ export default function AddProductPage() {
     }
 
     try {
-      await uploadProductToStore(name, description, price, image);
+      await uploadProductToStore(name, description, Number(price), image);
       toast({
         title: "Product Added",
         description: "Your product has been successfully added.",
       });
-      setProductForm({ name: "", description: "", price: 0, image: "" });
+      setProductForm({ name: "", description: "", price: "", image: "" });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -110,13 +110,12 @@ export default function AddProductPage() {
             <div className="space-y-2">
               <Label>Price</Label>
               <Input
-                type="number"
                 name="price"
                 value={productForm.price}
                 onChange={(e) =>
                   setProductForm((prev) => ({
                     ...prev,
-                    price: parseFloat(e.target.value) || 0,
+                    price: e.target.value,
                   }))
                 }
                 placeholder="Product price"

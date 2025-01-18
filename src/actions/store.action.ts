@@ -1,6 +1,8 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 import { getDbUserID } from "./user.action";
 
 export async function getStoreInfo() {
@@ -36,6 +38,8 @@ export async function createStore(storeName: string, storeImage: string) {
             }
         });
 
+
+        revalidatePath("/setupstore");
         return store;
     } catch (error) {
         console.error("Error creating store:", error);
@@ -75,7 +79,14 @@ export async function uploadProductToStore(
     price: number,
     image: string
 ) {
+    const { userId } = await auth();
     const storeid = await getStoreId();
+
+
+    if (!userId) {
+        console.error("User ID is null or undefined.");
+        throw new Error("User not found.");
+    }
 
     if (!storeid) {
         console.error("Store ID is null or undefined.");
@@ -90,10 +101,12 @@ export async function uploadProductToStore(
                 description,
                 price,
                 image,
-                storeId: storeid
+                storeId: storeid,
+                userId: userId
             }
         });
 
+        revalidatePath("/setupstore");
         return product;
     } catch (error) {
         console.error("Error uploading product:", error);
@@ -124,5 +137,23 @@ export async function getProductsofStore() {
     } catch (error) {
         console.error("Error fetching products:", error);
         throw new Error("Failed to fetch products.");
+    }
+}
+
+
+export async function deleteProduct(id: string) {
+    try {
+        const product = await prisma.product.delete({
+            where: {
+                id: id
+            }
+        });
+
+        revalidatePath("/setupstore");
+        return product;
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        throw new Error("Failed to delete product.");
+
     }
 }

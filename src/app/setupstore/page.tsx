@@ -2,6 +2,7 @@
 
 import {
   createStore,
+  deleteProduct,
   getProductsofStore,
   getStoreInfo,
 } from "@/actions/store.action"; // Import your actions
@@ -14,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImageToSupabase } from "@/lib/uploadImageToSupabase";
 import { formatPrice } from "@/utils/formatPrice";
+import { useUser } from "@clerk/nextjs";
 import { CirclePlus, Shirt } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -33,6 +35,9 @@ type Product = {
 };
 
 export default function StorePage() {
+  const { user } = useUser();
+  const userId = user?.id;
+
   const { toast } = useToast();
   const [editForm, setEditForm] = useState<StoreInfo>({
     name: "",
@@ -100,6 +105,23 @@ export default function StorePage() {
         variant: "destructive",
         title: "Error",
         description: "Failed to fetch products.",
+      });
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      toast({
+        title: "Product Deleted",
+        description: "The product has been successfully deleted.",
+      });
+      await fetchProducts();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete the product.",
       });
     }
   };
@@ -205,6 +227,17 @@ export default function StorePage() {
                                   <p className="text-primary text-sm">
                                     Price: {formatPrice(product.price)}
                                   </p>
+                                  {product.userId === userId && (
+                                    <Button
+                                      onClick={() =>
+                                        handleDeleteProduct(product.id)
+                                      }
+                                      className="mt-2 w-full"
+                                      variant={"outline"}
+                                    >
+                                      Delete Product
+                                    </Button>
+                                  )}
                                 </div>
                               </div>
                             ))
