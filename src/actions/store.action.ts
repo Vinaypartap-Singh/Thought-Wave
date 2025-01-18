@@ -38,6 +38,15 @@ export async function createStore(storeName: string, storeImage: string) {
             }
         });
 
+        await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                businessProfile: true
+            }
+        })
+
 
         revalidatePath("/setupstore");
         return store;

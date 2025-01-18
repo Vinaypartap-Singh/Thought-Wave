@@ -31,7 +31,7 @@ type Product = {
   name: string;
   description: string | null;
   price: number;
-  image: string;
+  image: string | null;
 };
 
 export default function StorePage() {
@@ -45,7 +45,7 @@ export default function StorePage() {
   });
   const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [products, setProducts] = useState<any>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   const handleFileChange = async (
@@ -99,7 +99,7 @@ export default function StorePage() {
   const fetchProducts = async () => {
     try {
       const productData = await getProductsofStore();
-      setProducts(productData || []);
+      setProducts(productData);
     } catch (error) {
       toast({
         variant: "destructive",
