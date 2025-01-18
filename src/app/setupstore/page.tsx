@@ -5,6 +5,7 @@ import {
   getProductsofStore,
   getStoreInfo,
 } from "@/actions/store.action"; // Import your actions
+import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -106,12 +107,11 @@ export default function StorePage() {
   useEffect(() => {
     const fetchStoreInfo = async () => {
       try {
-        setLoading(true); // Set loading to true before fetching
+        setLoading(true);
         const data = await getStoreInfo();
         setStoreInfo(data);
 
         if (data) {
-          // Fetch products if the store exists
           await fetchProducts();
         }
       } catch (error) {
@@ -121,7 +121,7 @@ export default function StorePage() {
           description: "Failed to fetch store information.",
         });
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
 
@@ -141,8 +141,9 @@ export default function StorePage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            // Show loading indicator while fetching data
-            <div className="text-center py-8">Loading...</div>
+            <div className="text-center py-8">
+              <Loader />
+            </div>
           ) : storeInfo ? (
             <div className="space-y-4">
               <div className="space-y-2">
