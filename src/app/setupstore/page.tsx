@@ -40,6 +40,7 @@ export default function StorePage() {
   const [storeInfo, setStoreInfo] = useState<StoreInfo | null>(null);
   const [uploading, setUploading] = useState(false);
   const [products, setProducts] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -105,6 +106,7 @@ export default function StorePage() {
   useEffect(() => {
     const fetchStoreInfo = async () => {
       try {
+        setLoading(true); // Set loading to true before fetching
         const data = await getStoreInfo();
         setStoreInfo(data);
 
@@ -118,6 +120,8 @@ export default function StorePage() {
           title: "Error",
           description: "Failed to fetch store information.",
         });
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -136,7 +140,10 @@ export default function StorePage() {
           </p>
         </CardHeader>
         <CardContent>
-          {storeInfo ? (
+          {loading ? (
+            // Show loading indicator while fetching data
+            <div className="text-center py-8">Loading...</div>
+          ) : storeInfo ? (
             <div className="space-y-4">
               <div className="space-y-2">
                 {storeInfo.image && (

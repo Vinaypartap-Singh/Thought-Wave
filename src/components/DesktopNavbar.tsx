@@ -134,7 +134,7 @@ export default function DesktopNavbar() {
                     className="flex items-center justify-start  gap-2"
                     asChild
                   >
-                    <Link href={`/store`}>
+                    <Link href={`/setupstore`}>
                       <Store className="w-4 h-4" />
                       <span className="hidden lg:inline">Your Store</span>
                     </Link>
