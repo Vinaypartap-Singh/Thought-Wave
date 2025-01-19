@@ -48,7 +48,7 @@ export default function UpdateStatus({ orderId }: { orderId: string }) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full mt-3">
-          Edit Profile
+          Update Status
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
