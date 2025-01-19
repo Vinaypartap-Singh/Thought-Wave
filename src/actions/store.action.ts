@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { OrderStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getDbUserID } from "./user.action";
 
@@ -248,5 +249,25 @@ export async function placeOrder(userId: string, storeId: string, productId: str
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         console.error("Failed to Place Order:", errorMessage);
         return { success: false, error: "Failed to Place Order" };
+    }
+}
+
+export async function updateStatus(id: string, status: OrderStatus) {
+    console.log("Updating status:", { id, status });
+    try {
+        const order = await prisma.order.update({
+            where: {
+                id: id
+            },
+            data: {
+                status: status
+            }
+        });
+
+        return order;
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error("Failed to Update Order:", errorMessage);
+        return { success: false, error: "Failed to Update Order" };
     }
 }
