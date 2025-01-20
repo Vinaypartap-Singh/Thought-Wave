@@ -8,6 +8,7 @@ import {
 import { supabase } from "@/lib/supabaseClient";
 import { isCounter } from "@/utils/isCounter";
 import { useEffect, useState } from "react";
+import Loader from "./Loader";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 
 export default function CounterCard() {
@@ -57,7 +58,7 @@ export default function CounterCard() {
       <CardHeader>
         <CardTitle className="text-md">Visitor Counter</CardTitle>
         <div className="text-lg font-bold">
-          {count !== null ? count : "Loading..."}
+          {count !== null ? count : <Loader />}
         </div>
       </CardHeader>
     </Card>

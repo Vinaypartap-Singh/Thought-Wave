@@ -281,7 +281,7 @@ function PostCard({
                 <div className="flex space-x-3">
                   <Avatar className="size-8 flex-shrink-0">
                     <AvatarImage
-                      src={authorImage || "/avatar.png"}
+                      src={user.imageUrl || "/avatar.png"}
                       className="object-cover"
                     />
                   </Avatar>
@@ -357,9 +357,9 @@ function PostCard({
 
               {user ? (
                 <div className="flex space-x-3">
-                  <Avatar className="size-12 flex-shrink-0">
+                  <Avatar className="size-8 flex-shrink-0">
                     <AvatarImage
-                      src={authorImage || "/avatar.png"}
+                      src={user.imageUrl || "/avatar.png"}
                       className="object-cover"
                     />
                   </Avatar>
