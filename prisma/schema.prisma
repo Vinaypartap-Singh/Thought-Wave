@@ -265,6 +265,13 @@ model RoomMember {
   @@id([roomId, userId]) // Composite key to avoid duplicates in the RoomMember table
 }
 
+model Counter {
+  id        Int      @id @default(autoincrement())
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum NotificationType {
   LIKE
   COMMENT

@@ -1,5 +1,6 @@
 import { getPosts } from "@/actions/post.action";
 import { getDbUserID } from "@/actions/user.action";
+import CounterCard from "@/components/CounterCard";
 import CreatePost from "@/components/CreatePost";
 import PostCard from "@/components/PostCard";
 import WhoToFollow from "@/components/WhoToFollow";
@@ -22,7 +23,8 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="hidden lg:block lg:col-span-4 sticky top-20">
+      <div className="hidden lg:block lg:col-span-4 sticky top-20 space-y-6">
+        <CounterCard />
         <WhoToFollow />
       </div>
     </div>
