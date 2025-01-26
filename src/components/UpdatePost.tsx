@@ -104,7 +104,7 @@ export default function UpdatePost({
             <Textarea
               placeholder={oldContent ?? "Write something..."}
               id="name"
-              value={newContent}
+              value={newContent ? newContent : oldContent}
               className="col-span-3"
               onChange={(e) => setNewContent(e.target.value)}
             />
