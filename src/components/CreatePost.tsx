@@ -1,20 +1,22 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
-import { Card, CardContent } from "./ui/card";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { Textarea } from "./ui/textarea";
-import { ImageIcon, Loader2Icon, SendIcon, X } from "lucide-react";
-import { Button } from "./ui/button";
 import { createPost } from "@/actions/post.action";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImageToSupabase } from "@/lib/uploadImageToSupabase"; // Adjust the path as needed
+import { useUser } from "@clerk/nextjs";
+import { ImageIcon, Loader2Icon, SendIcon, X } from "lucide-react";
+import { useState } from "react";
+import { Avatar, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
 function CreatePost() {
   const { toast } = useToast();
   const { user } = useUser();
   const [content, setContent] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
@@ -46,11 +48,11 @@ function CreatePost() {
 
     setIsPosting(true);
     try {
-      const result = await createPost(content, imageUrl);
+      const result = await createPost(content, imageUrl, youtubeUrl);
       if (result?.success) {
-        // Reset the form
         setContent("");
         setImageUrl("");
+        setYoutubeUrl("");
 
         toast({ title: "Post created successfully" });
       }
@@ -81,9 +83,19 @@ function CreatePost() {
             </Avatar>
             <Textarea
               placeholder="What's on your mind?"
-              className="min-h-[100px] resize-none border-none focus-visible:ring-0 p-0 text-base"
+              className="min-h-[100px] resize-none text-base"
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              disabled={isPosting}
+            />
+          </div>
+
+          <div className="flex space-x-4">
+            <Input
+              placeholder="Youtube Video URL (Optional)"
+              className="h-auto text-base"
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
               disabled={isPosting}
             />
           </div>
@@ -130,7 +142,9 @@ function CreatePost() {
               className="flex items-center"
               onClick={handleSubmit}
               disabled={
-                (!content.trim() && !imageUrl) || isPosting || isUploading
+                (!content.trim() && !imageUrl && !youtubeUrl.trim()) ||
+                isPosting ||
+                isUploading
               }
             >
               {isPosting ? (

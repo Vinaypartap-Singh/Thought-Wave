@@ -8,6 +8,7 @@ import {
 } from "@/actions/post.action";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { extractYouTubeId } from "@/utils/extractYoutubeId";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import {
@@ -188,6 +189,22 @@ function PostCard({
                   height={1200}
                 />
               </Link>
+            </div>
+          )}
+
+          {/* Youtube Video Display */}
+          {post.youtubeUrl && (
+            <div className="rounded-lg overflow-hidden">
+              <iframe
+                width="100%"
+                height="400"
+                src={`https://www.youtube.com/embed/${extractYouTubeId(
+                  post.youtubeUrl
+                )}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="YouTube video player"
+              ></iframe>
             </div>
           )}
 
