@@ -293,10 +293,18 @@ export default function ChatPage() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col sm:flex-row min-h-[calc(100vh-14rem)] antialiased text-foreground bg-background shadow-md border border-border">
+    <div className="flex flex-col sm:flex-row min-h-[calc(100vh-14rem)] antialiased text-foreground bg-background shadow-md border border-border relative">
       {/* Sidebar */}
-      <div className="flex flex-col w-full sm:w-64 bg-card text-card-foreground border-r border-border">
-        <div className="flex justify-between items-center h-14 border-b border-border px-4">
+      <div
+        className={`flex flex-col w-full ${
+          showMessageScreen ? "sm:w-0" : "sm:w-64"
+        } bg-card text-card-foreground border-r border-border`}
+      >
+        <div
+          className={`flex justify-between items-center h-14 border-b border-border px-4 ${
+            showMessageScreen ? "absolute top-0 w-full z-10 bg-background" : ""
+          }`}
+        >
           <h1 className="text-xl font-bold text-start">Messages</h1>
           {showCloseIcon && (
             <Button variant={"ghost"} onClick={handleShowChatScreen}>
@@ -358,7 +366,11 @@ export default function ChatPage() {
 
       {/* Chat Area */}
       {showMessageScreen ? (
-        <div className="flex-1 p-4 min-h-[calc(100vh-14rem)]">
+        <div
+          className={`flex-1 p-4 min-h-[calc(100vh-14rem)] ${
+            showMessageScreen ? "py-16" : ""
+          }`}
+        >
           {selectedChat ? (
             <div className="w-full h-full">
               <div
