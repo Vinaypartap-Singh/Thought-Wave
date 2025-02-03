@@ -291,14 +291,14 @@ export async function deletePost(postId: string) {
     }
 }
 
-export async function updatePost(postId: string, content?: string, image?: string) {
+export async function updatePost(postId: string, content?: string, image?: string, youtubeUrl?: string) {
     try {
         const userId = await getDbUserID();
 
         // Fetch the post to check existence and ownership, and retrieve current values
         const post = await prisma.post.findUnique({
             where: { id: postId },
-            select: { authorId: true, content: true, image: true },
+            select: { authorId: true, content: true, image: true, youtubeUrl: true },
         });
 
         if (!post) throw new Error("Post not found");
@@ -307,11 +307,12 @@ export async function updatePost(postId: string, content?: string, image?: strin
         // Fallback to existing values if new ones are not provided
         const updatedContent = content === "" ? post.content : content;
         const updatedImage = image === "" ? post.image : image;
+        const updatedYoutubebUrl = youtubeUrl === "" ? post.youtubeUrl : youtubeUrl;
 
         // Perform the update with the updated values
         await prisma.post.update({
             where: { id: postId },
-            data: { content: updatedContent, image: updatedImage },
+            data: { content: updatedContent, image: updatedImage, youtubeUrl: updatedYoutubebUrl },
         });
 
         revalidatePath(`/`);

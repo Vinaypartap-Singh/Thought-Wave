@@ -31,6 +31,7 @@ export default function UpdatePost({
   const [newContent, setNewContent] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
+  const youtubeUrl = "";
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -58,7 +59,7 @@ export default function UpdatePost({
     if (isUpdating) return;
     try {
       setIsUpdating(true);
-      const result = await updatePost(postId, newContent, imageUrl);
+      const result = await updatePost(postId, newContent, imageUrl, youtubeUrl);
       if (result.success) {
         toast({
           title: "Post updated",
