@@ -14,6 +14,7 @@ import {
   encryptMessage,
   generateKey,
 } from "@/utils/encryption";
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function ChatPage() {
@@ -39,6 +40,12 @@ export default function ChatPage() {
   const [acceptedChats, setAcceptedChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // States for handling Chat Screen and Message Screen Ui
+
+  const [showChatScreen, setShowChatScreen] = useState<boolean>(true);
+  const [showMessageScreen, setShowMessageScreen] = useState<boolean>(false);
+  const [showCloseIcon, setShowCloseIcon] = useState<boolean>(false);
 
   interface Message {
     id: string;
@@ -178,7 +185,10 @@ export default function ChatPage() {
       senderId: senderId,
       encryptedKey: encryptedKey,
     });
-    fetchMessages(roomId); // Fetch messages for the selected chat
+    fetchMessages(roomId);
+    setShowChatScreen(false);
+    setShowMessageScreen(true);
+    setShowCloseIcon(true);
   };
 
   const handleSendMessage = async () => {
@@ -244,6 +254,12 @@ export default function ChatPage() {
     }
   };
 
+  const handleShowChatScreen = () => {
+    setShowChatScreen(true);
+    setShowMessageScreen(false);
+    setShowCloseIcon(false);
+  };
+
   useEffect(() => {
     const messagesChannel = supabase
       .channel("custom-insert-channel")
@@ -280,10 +296,17 @@ export default function ChatPage() {
     <div className="flex flex-col sm:flex-row min-h-[calc(100vh-14rem)] antialiased text-foreground bg-background shadow-md border border-border">
       {/* Sidebar */}
       <div className="flex flex-col w-full sm:w-64 bg-card text-card-foreground border-r border-border">
-        <div className="flex items-center h-14 border-b border-border px-4">
+        <div className="flex justify-between items-center h-14 border-b border-border px-4">
           <h1 className="text-xl font-bold text-start">Messages</h1>
+          {showCloseIcon && (
+            <Button variant={"ghost"} onClick={handleShowChatScreen}>
+              <X />
+            </Button>
+          )}
         </div>
-        <div className="overflow-y-auto">
+        <div
+          className={`overflow-y-auto ${showChatScreen ? "block" : "hidden"}`}
+        >
           {loading && (
             <div className="p-4 text-center text-muted-foreground">
               Loading...
@@ -300,7 +323,7 @@ export default function ChatPage() {
             acceptedChats.map((chat) => (
               <Button
                 key={chat.sender.id}
-                className="w-full rounded-none cursor-pointer"
+                className="w-full rounded-none cursor-pointer justify-start"
                 style={{ padding: "32px" }}
                 asChild
                 variant={"outline"}
@@ -313,11 +336,11 @@ export default function ChatPage() {
                 }
               >
                 <div className="flex justify-start items-center px-4 py-3 hover:bg-muted">
-                  <div className="relative w-12 h-12">
+                  <div>
                     <Avatar>
                       <AvatarImage
                         src={chat.sender.image || `/avatar.png`}
-                        className="object-cover w-full h-full rounded-full"
+                        className="object-cover rounded-full"
                       />
                     </Avatar>
                   </div>
@@ -334,81 +357,89 @@ export default function ChatPage() {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 p-4 min-h-[calc(100vh-14rem)]">
-        {selectedChat ? (
-          <div className="w-full h-full">
-            <div
-              ref={scrollAreaRef}
-              className="flex flex-col h-[calc(100vh-20rem)] overflow-y-auto hide-scrollbar"
-            >
-              {isLoading ? (
-                <div className="h-full flex items-center justify-center gap-4">
-                  <Loader /> Loading messages...
-                </div>
-              ) : messages.length > 0 ? (
-                messages.map((message: any, idx: number) => (
-                  <div
-                    key={message.id}
-                    className={`col-start-${
-                      message?.senderId === selectedChat?.senderId ? 6 : 1
-                    } col-end-13 p-3 rounded-lg`}
-                  >
+      {showMessageScreen ? (
+        <div className="flex-1 p-4 min-h-[calc(100vh-14rem)]">
+          {selectedChat ? (
+            <div className="w-full h-full">
+              <div
+                ref={scrollAreaRef}
+                className="flex flex-col h-[calc(100vh-20rem)] overflow-y-auto hide-scrollbar"
+              >
+                {isLoading ? (
+                  <div className="h-full flex items-center justify-center gap-4">
+                    <Loader /> Loading messages...
+                  </div>
+                ) : messages.length > 0 ? (
+                  messages.map((message: any, idx: number) => (
                     <div
-                      className={`flex ${
-                        message?.senderId === selectedChat?.senderId
-                          ? "flex-row"
-                          : "flex-row-reverse"
-                      } items-center gap-2`}
+                      key={message.id}
+                      className={`col-start-${
+                        message?.senderId === selectedChat?.senderId ? 6 : 1
+                      } col-end-13 p-3 rounded-lg`}
                     >
-                      <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-black flex-shrink-0">
-                        {message.sender?.username.charAt(0).toUpperCase()}
-                      </div>
                       <div
-                        className={`relative ${
+                        className={`flex ${
                           message?.senderId === selectedChat?.senderId
-                            ? "mr-3"
-                            : "ml-3"
-                        } text-sm bg-muted py-2 px-4 shadow rounded-xl border border-border`}
+                            ? "flex-row"
+                            : "flex-row-reverse"
+                        } items-center gap-2`}
                       >
-                        <div className="text-muted-foreground">
-                          {message?.content}
+                        <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-black flex-shrink-0">
+                          {message.sender?.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div
+                          className={`relative ${
+                            message?.senderId === selectedChat?.senderId
+                              ? "mr-3"
+                              : "ml-3"
+                          } text-sm bg-muted py-2 px-4 shadow rounded-xl border border-border`}
+                        >
+                          <div className="text-muted-foreground">
+                            {message?.content}
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="h-full flex justify-center items-center">
+                    No messages yet.
                   </div>
-                ))
-              ) : (
-                <div className="h-full flex justify-center items-center">
-                  No messages yet.
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            {/* Input area */}
-            <div className="mt-6 flex items-center gap-4">
-              <input
-                type="text"
-                value={newMessage}
-                onKeyDown={handleKeyPress}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="flex-1 p-2 border border-muted rounded-l-md"
-                placeholder="Type a message"
-              />
-              <Button
-                variant="default"
-                onClick={handleSendMessage}
-                disabled={sending}
-              >
-                {sending ? "Sending..." : "Send"}
-              </Button>
+              {/* Input area */}
+              <div className="mt-6 flex items-center gap-4">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onKeyDown={handleKeyPress}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  className="flex-1 p-2 border border-muted rounded-l-md"
+                  placeholder="Type a message"
+                />
+                <Button
+                  variant="default"
+                  onClick={handleSendMessage}
+                  disabled={sending}
+                >
+                  {sending ? "Sending..." : "Send"}
+                </Button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="h-full flex justify-center items-center">
+          ) : (
+            <div className="h-full flex justify-center items-center">
+              <div>Select a chat to start messaging</div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="flex-1 p-4 min-h-[calc(100vh-14rem)]">
+          {/* <div className="h-full flex justify-center items-center">
             <div>Select a chat to start messaging</div>
-          </div>
-        )}
-      </div>
+          </div> */}
+        </div>
+      )}
     </div>
   );
 }
