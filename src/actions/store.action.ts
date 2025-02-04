@@ -58,6 +58,51 @@ export async function createStore(storeName: string, storeImage: string) {
 }
 
 
+
+export async function updateStore(storeName: string, storeImage: string) {
+    const userId = await getDbUserID();
+
+    if (!userId) {
+        console.error("User ID not found.");
+        throw new Error("User not logged in.");
+    }
+
+
+    const existingStore = await prisma.store.findUnique({
+        where: {
+            ownerId: userId
+        }
+    });
+
+    if (!existingStore) {
+        console.error("Store not found. Please Create One");
+        throw new Error("Store not found. Please Create One");
+    }
+
+    const updateName = storeName === "" ? existingStore?.name : storeName;
+    const updatedImage = storeImage === "" ? existingStore?.image : storeImage;
+
+    try {
+
+        const store = await prisma.store.update({
+            where: {
+                ownerId: userId
+            },
+            data: {
+                name: updateName,
+                image: updatedImage
+            }
+        });
+
+        return store;
+    }
+    catch (error) {
+        console.error("Error updating store Info", error);
+        throw new Error("Failed to update store info.");
+    }
+}
+
+
 export async function getStoreId() {
     const userId = await getDbUserID();
 
