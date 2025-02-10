@@ -10,8 +10,6 @@ import {
   MessageSquareCode,
   PenLine,
   Search,
-  ShoppingBag,
-  Store,
   User,
 } from "lucide-react";
 import Link from "next/link";
@@ -63,14 +61,14 @@ export default function DesktopNavbar() {
         </Button>
       )}
 
-      {user && (
+      {/* {user && (
         <Button variant="ghost" className="flex items-center gap-2" asChild>
           <Link href="/store">
             <ShoppingBag className="w-4 h-4" />
             <span className="hidden lg:inline">Store</span>
           </Link>
         </Button>
-      )}
+      )} */}
 
       <Button variant="ghost" className="flex items-center gap-2" asChild>
         <Link href="/search">
@@ -138,7 +136,7 @@ export default function DesktopNavbar() {
                     </Link>
                   </Button>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" asChild>
+                {/* <DropdownMenuItem className="cursor-pointer" asChild>
                   <Button
                     variant="ghost"
                     className="flex items-center justify-start  gap-2"
@@ -149,7 +147,7 @@ export default function DesktopNavbar() {
                       <span className="hidden lg:inline">Your Store</span>
                     </Link>
                   </Button>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem
                   asChild
                   onClick={() => signOut()}

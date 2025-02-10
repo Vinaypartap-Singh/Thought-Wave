@@ -42,13 +42,11 @@ import {
   ImageIcon,
   LinkIcon,
   MapPinIcon,
-  ShoppingBag,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import MessageRequestButton from "./_components/MessageRequestButton";
-import YourOrder from "./_components/YourOrder";
 
 type User = Awaited<ReturnType<typeof getPublicUserInfo>>;
 type Posts = Awaited<ReturnType<typeof getUserPosts>>;
@@ -354,14 +352,14 @@ function ProfilePageClient({
               Liked Posts
             </TabsTrigger>
 
-            <TabsTrigger
+            {/* <TabsTrigger
               value="orders"
               className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary
                data-[state=active]:bg-transparent px-6 font-semibold"
             >
               <ShoppingBag className="size-4" />
               Your Orders
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="posts" className="mt-6">
@@ -392,7 +390,7 @@ function ProfilePageClient({
             </div>
           </TabsContent>
 
-          <TabsContent value="orders" className="mt-6">
+          {/* <TabsContent value="orders" className="mt-6">
             <div className="space-y-6 grid grid-cols-2 gap-4">
               {userOrders.length > 0 ? (
                 userOrders.map((product: any, index: number) => (
@@ -405,7 +403,7 @@ function ProfilePageClient({
                 </div>
               )}
             </div>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
 
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
