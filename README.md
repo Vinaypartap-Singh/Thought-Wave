@@ -2,7 +2,7 @@ We’re thrilled to unveil the official website for **ThoughtWave** — a digita
 
 ### **Welcome to ThoughtWave Online**
 
-The newly launched website, [ThoughtWave](https://thought-wave-vinay.vercel.app/), is your gateway to discovering, sharing, and engaging with a world of ideas. Whether you’re a thinker looking to share your insights, a seeker searching for inspiration, or someone eager to connect with a global community, ThoughtWave has something for everyone.
+The newly launched website, [ThoughtWave](https://www.thoughtwave.live/), is your gateway to discovering, sharing, and engaging with a world of ideas. Whether you’re a thinker looking to share your insights, a seeker searching for inspiration, or someone eager to connect with a global community, ThoughtWave has something for everyone.
 
 ### **Why ThoughtWave?**
 
@@ -26,7 +26,7 @@ The new ThoughtWave website is sleek, intuitive, and packed with features to mak
 
 ### **How to Get Started**
 
-1.  **Visit the Website:** Go to [ThoughtWave](https://thought-wave-vinay.vercel.app/).
+1.  **Visit the Website:** Go to [ThoughtWave](https://www.thoughtwave.live/).
 2.  **Sign Up:** Create your profile to start sharing and engaging.
 3.  **Explore:** Browse trending thoughts, follow users, and join the conversations.
 4.  **Chat Securely:** Request or accept chat invitations to start private, encrypted conversations.
@@ -40,6 +40,6 @@ Let’s make waves together, one thought at a time. Dive into the conversation t
 
 ### **Visit Us Now!**
 
-Check out the website at [ThoughtWave](https://thought-wave-vinay.vercel.app/) and become part of a growing community where your ideas matter.
+Check out the website at [ThoughtWave](https://www.thoughtwave.live/) and become part of a growing community where your ideas matter.
 
 **ThoughtWave** — Where Ideas Flow, and Minds Meet Securely. 🌟
