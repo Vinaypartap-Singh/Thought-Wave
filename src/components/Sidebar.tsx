@@ -1,14 +1,14 @@
 import { getUserByClerkId } from "@/actions/user.action";
+import { isSidebarNavigation } from "@/data/navItems";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { LinkIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
+import SidebarNavigation from "./SidebarNavigation";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
-import SidebarNavigation from "./SidebarNavigation";
-import { isSidebarNavigation } from "@/data/navItems";
 
 async function Sidebar() {
   const authUser = await currentUser();
@@ -21,7 +21,7 @@ async function Sidebar() {
   if (!user) return null;
 
   return (
-    <div className={`sticky ${isSidebarNavigation ? "top-3" : "top-20"}`}>
+    <div className={`fixed max-w-72 w-full`}>
       <Card>
         <CardContent className="pt-6">
           {isSidebarNavigation ? (

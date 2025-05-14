@@ -1,18 +1,19 @@
 "use client";
 
 import { useNotifications } from "@/app/hooks/useNotificationRealtime";
-import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import Logo from "@/assets/1.png";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import {
   Bell,
-  Fingerprint,
   Home,
-  Image,
+  Image as ImageIcon,
   PenLine,
   Search,
+  Settings,
   User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 
 export default function SidebarNavigation() {
@@ -25,11 +26,15 @@ export default function SidebarNavigation() {
 
   return (
     <header className="hidden md:grid md:grid-cols-1 md:gap-4 md:items-start">
-      <Link
-        href="/"
-        className="text-xl text-primary tracking-wider px-3 font-bold italic"
-      >
-        TW
+      <Link href="/" className="flex items-center">
+        <Image
+          src={Logo}
+          alt="Thought Wave Logo"
+          width={128}
+          height={40}
+          className="w-40 h-auto brightness-95"
+          priority
+        />
       </Link>
       <Button
         variant="ghost"
@@ -48,7 +53,7 @@ export default function SidebarNavigation() {
         asChild
       >
         <Link href="/feed">
-          <Image className="w-4 h-4" />
+          <ImageIcon className="w-4 h-4" />
           <span className="hidden lg:inline">Feed</span>
         </Link>
       </Button>
@@ -126,7 +131,7 @@ export default function SidebarNavigation() {
                 user.emailAddresses[0].emailAddress.split("@")[0]
               }`}
             >
-              <Fingerprint className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
               <span className="hidden lg:inline">Manage Account</span>
             </Link>
           </Button>
