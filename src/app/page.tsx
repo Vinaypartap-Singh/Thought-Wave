@@ -2,7 +2,7 @@ import { getPosts } from "@/actions/post.action";
 import { getDbUserID } from "@/actions/user.action";
 import CounterCard from "@/components/CounterCard";
 import CreatePost from "@/components/CreatePost";
-import PostCard from "@/components/PostCard";
+import PostFeed from "@/components/PostFeed";
 import WhoToFollow from "@/components/WhoToFollow";
 import { currentUser } from "@clerk/nextjs/server";
 
@@ -16,10 +16,14 @@ export default async function Home() {
       <div className="lg:col-span-6">
         {user ? <CreatePost /> : null}
 
-        <div className="space-y-6">
+        {/* <div className="space-y-6">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} dbUserId={dbUserId} />
           ))}
+        </div> */}
+
+        <div className="space-y-6">
+          <PostFeed initialPosts={posts} dbUserId={dbUserId} />
         </div>
       </div>
 
