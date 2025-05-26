@@ -16,14 +16,8 @@ export default async function Home() {
       <div className="lg:col-span-6">
         {user ? <CreatePost /> : null}
 
-        {/* <div className="space-y-6">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} dbUserId={dbUserId} />
-          ))}
-        </div> */}
-
         <div className="space-y-6">
-          <PostFeed initialPosts={posts} dbUserId={dbUserId} />
+          {posts && <PostFeed initialPosts={posts} dbUserId={dbUserId} />}
         </div>
       </div>
 
