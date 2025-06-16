@@ -184,7 +184,7 @@ function PostCard({
                 <Image
                   src={post.image}
                   alt="Post content"
-                  className="w-full h-[410px] object-cover"
+                  className="w-full h-auto object-contain"
                   width={1200}
                   height={1200}
                 />
